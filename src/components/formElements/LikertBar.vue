@@ -1,6 +1,9 @@
 <template>
   <div class="likert-bar" :class="{subsection: eldata.subsection }" :id="`form-el-${eldata.name}`" v-bind:value="value">
-    <label class="title">{{ eldata.question }}</label>
+    <div class="title-row">
+      <label class="title">{{ eldata.question }}</label>
+      <HelpText :text="eldata.help" />
+    </div>
     <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
     <div class="option-row">
       <div
@@ -39,9 +42,13 @@
 </template>
 
 <script>
+import HelpText from "@/components/HelpText.vue"
 export default {
   name: "LikertBar",
   props: ["eldata", "value", "color"],
+  components: {
+    HelpText
+  },
   data() {
     return {
       selectedOption: this.value,

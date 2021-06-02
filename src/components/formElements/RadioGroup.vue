@@ -1,21 +1,25 @@
 <template>
   <div class="radio-group" :class="{subsection: eldata.subsection }" :id="`form-el-${eldata.name}`" v-bind:value="value">
-    <label class="title">{{ eldata.question }}</label>
+    <div class="title-row">
+      <label class="title">{{ eldata.question }}</label>
+      <HelpText :text="eldata.help" />
+    </div>
+
     <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
     <div class="option-row" :class="{ col: getLength() > 10 }">
       <div
         class="option-col"
         v-for="(option, oi) in eldata.options"
         v-bind:key="`${eldata.name}-option-${oi+1}`"
-        v-on:click="selectOption(oi+1)"
+        v-on:click="selectOption(eldata.options[oi].name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())"
       >
         <div class="option-label">
           <input
           type="radio"
           :name="`${eldata.name}-option`"
           :id="`${eldata.name}-option-${oi+1}`"
-          :value="oi+1"
-          :checked="selectedOption === oi+1"
+          :value="eldata.options[oi].name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()"
+          :checked="selectedOption === eldata.options[oi].name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()"
           />
           <div class="checkmark">
             <div class="checked" :style="{background: color}"></div>
@@ -29,9 +33,13 @@
 </template>
 
 <script>
+import HelpText from "@/components/HelpText.vue"
 export default {
   name: "RadioGroup",
   props: ["eldata", "value", "color"],
+  components: {
+    HelpText
+  },
   data() {
     return {
       today: new Date(),
@@ -44,6 +52,7 @@ export default {
     
     this.eldata.options.forEach((option, i) => {
       if (option.action) this.actionOption = i+1;
+      // if (option.action) this.actionOption = option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase();
     });
     if (this.value != null) this.selectedOption = this.value
     this.initialize()
@@ -59,23 +68,29 @@ export default {
       if (!this.actionOption) return;
       let option = this.eldata.options[this.actionOption-1]
       let action = {
-        show: (option.action.onchecked && this.selectedOption == this.actionOption) || (!option.action.onchecked && this.selectedOption != this.actionOption),
+        show: (option.action.onchecked && this.selectedOption == option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()) || (!option.action.onchecked && this.selectedOption != option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()),
         element: option.action.name
       }
       this.$root.$emit('toggleElement', action);
-      this.$root.$emit('endSurvey', false);
+      if (option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase() == this.selectedOption && option.action.type == 'end-survey') {
+        this.endSurvey = true
+        this.$root.$emit('endSurvey', true)
+      } else {
+        this.endSurvey = false
+        this.$root.$emit('endSurvey', false);
+      }
     },
     radioChanged (val, oldVal) {
-      if (!this.actionOption || (this.actionOption != val && this.actionOption != oldVal)) return;
+      if (!this.actionOption) return;
       let option = this.eldata.options[this.actionOption-1]
+      if ((option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase() != val && option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase() != oldVal)) return;
       if (option.action.name) {
         let action = {
-          show: (option.action.onchecked && this.selectedOption == this.actionOption) || (!option.action.onchecked && this.selectedOption != this.actionOption),
+          show: (option.action.onchecked && this.selectedOption == option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()) || (!option.action.onchecked && this.selectedOption != option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()),
           element: option.action.name
         }
         this.$root.$emit('toggleElement', action);
       }
-
       if (this.endSurvey) {
         this.endSurvey = false
         this.$root.$emit('endSurvey', false)
@@ -118,6 +133,13 @@ li {
 
 a {
   color: #42b983;
+}
+
+.title-row {
+  font-size: 1.1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .title {

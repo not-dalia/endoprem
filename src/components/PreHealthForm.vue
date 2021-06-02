@@ -79,17 +79,20 @@ export default {
   data() {
     return {
       formData: null,
+      originalFormData: null,
       currentPage: 0,
       currentQuestion: 0,
       results: {},
       isSurveyEnd: false,
-      color: '#009688'
+      color: '#009688',
+      pagesToSkip: [],
+      endSurveyLocation: {page: null, question: null}
     };
   },
   watch: {
     results: {
       handler: function (val, oldVal) {
-        // console.log(JSON.stringify(val))
+        console.log(JSON.stringify(val))
       },
       deep: true,
     },
@@ -97,36 +100,49 @@ export default {
   mounted() {
     switch( this.type ) {
       case "before":
-        this.formData = FormData.before.sections
+        this.originalFormData = FormData.before.sections
         this.color = FormData.before.color
         break
       case "during":
-        this.formData = FormData.during.sections
+        this.originalFormData = FormData.during.sections
         this.color = FormData.during.color
         break
       case "after":
-        this.formData = FormData.after.sections
+        this.originalFormData = FormData.after.sections
         this.color = FormData.after.color
         break
       case "all":
-        this.formData = FormData.all.sections
+        this.originalFormData = FormData.all.sections
         this.color = FormData.all.color
         break
       default:
-        this.formData = FormData.before.sections
+        this.originalFormData = FormData.before.sections
         this.color = FormData.before.color
         break
     }
+    this.formData = JSON.parse(JSON.stringify(this.originalFormData))
   },
   created () {
     this.$root.$on('endSurvey', this.endSurvey);
+    this.$root.$on('togglePage', this.togglePage);
+
   },
   destroyed () {
+    this.$root.$off('togglePage', this.togglePage);
     this.$root.$off('endSurvey', this.endSurvey)
   },
   methods: {
     scrollToTop() {
       window.scrollTo(0, 0);
+    },
+    togglePage(data) {
+      if (this.pagesToSkip.indexOf(data.page) >= 0 ) {
+        this.pagesToSkip.splice(this.pagesToSkip.indexOf(data.page), 1)
+        this.formData.splice(data.page, 0, this.originalFormData[data.page])
+      } else {
+        this.pagesToSkip.push(data.page)
+        this.formData.splice(data.page, 1)
+      }
     },
     nextPage() {
       if (
@@ -136,6 +152,13 @@ export default {
         )
       )
         return;
+      
+      if (this.isSurveyEnd && this.currentPage == this.endSurveyLocation.page && this.currentQuestion == this.endSurveyLocation.question) {
+          this.currentPage = this.formData.length - 1;
+          this.currentQuestion = this.formData[this.currentPage].length - 1;
+        return;
+      }
+
       if (this.currentQuestion < this.formData[this.currentPage].length - 1) {
         this.currentQuestion++;
       } else {
@@ -148,6 +171,13 @@ export default {
     },
     prevPage() {
       if (!(this.currentPage > 0 || this.currentQuestion > 0)) return;
+      
+      if (this.isSurveyEnd && this.currentPage == this.formData.length - 1) {
+          this.currentPage = this.endSurveyLocation.page;
+          this.currentQuestion = this.endSurveyLocation.question;
+        return;
+      }
+
       if (this.currentQuestion > 0) {
         this.currentQuestion--;
       } else {
@@ -158,6 +188,7 @@ export default {
     },
     endSurvey: function(isSurveyEnd) {
       this.isSurveyEnd = isSurveyEnd
+      this.endSurveyLocation = {page: isSurveyEnd ? this.currentPage : null, question: isSurveyEnd ? this.currentQuestion : null}
     }
   },
 };

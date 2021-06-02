@@ -2,7 +2,10 @@
   <div class="question-section" :id="`form-el-${eldata.name}`" v-bind:value="value" :class="{subsection: eldata.subsection }">
     <transition name="slide-fade">
       <div v-if="show">
-        <div class="title" v-if="eldata.title">{{eldata.title}}</div>
+        <div class="title-row">
+          <div class="title" v-if="eldata.title">{{eldata.title}}</div>
+          <HelpText :text="eldata.help" />
+        </div>
         <div class="desc" v-if="eldata.description">{{eldata.description}}</div>
         <FormElement v-for="(q, j) in eldata.questions" v-bind:key="`sub-form-el-${j}`" :formel="q" :subelement="true" v-model="result[q.name]" />
       </div>
@@ -11,11 +14,13 @@
 </template>
 
 <script>
+import HelpText from "@/components/HelpText.vue"
 export default {
   name: "Section",
   props: ["eldata", "value"],
   components: {
-    FormElement: () => import("@/components/FormElement.vue")
+    FormElement: () => import("@/components/FormElement.vue"),
+    HelpText
   },
   data() {
     return {

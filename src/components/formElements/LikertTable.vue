@@ -24,8 +24,13 @@
         v-bind:key="`${eldata.name}-row-${pm + 1}`"
       >
         <div class="table-cell prompt">
-          <div class="prompt-text">
-            {{ prompt }}
+          <div class="title-row">
+            <div class="prompt-text">
+              {{ prompt.prompt || prompt }}
+            </div>
+              <span v-show="collapse.split(',')[pm] == 'false'">
+                <HelpText :text="prompt.help" />
+              </span>
           </div>
           <div class="prompt-collapse" v-on:click="toggleExpand(pm)"  :style="{color: color}">
             <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[pm] == 'false', 'fa-chevron-down': collapse.split(',')[pm] == 'true'}"></i>
@@ -63,9 +68,13 @@
 </template>
 
 <script>
+import HelpText from "@/components/HelpText.vue"
 export default {
   name: "LikertTable",
   props: ["eldata", "value", "color"],
+  components: {
+    HelpText
+  },
   data() {
     return {
       today: new Date(),

@@ -23,6 +23,7 @@ let formData = {
           name: "testdate",
           type: "date",
           description: null,
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }]
       }, {
         title: "Your Details",
@@ -30,6 +31,7 @@ let formData = {
           question: "Please fill in your age (in years)",
           name: "age",
           type: "number",
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }, {
           question: "Are you?",
           name: "gender",
@@ -38,11 +40,13 @@ let formData = {
             name: "Male"
           }, {
             name: "Female"
-          }]
+          }],
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }, { //question      
           question: "How many years of full time education you have completed?",
           name: "yearsofeducation",
           type: "number",
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }]
       }, {
         title: "Your Details",
@@ -64,7 +68,8 @@ let formData = {
             description: "(Including Black African, Black Caribbean or any other Black/African/Caribbean background)"
           }, {
             name: "Other ethnic group"
-          }]
+          }],
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }]
       }, {
         title: "Your Details",
@@ -119,12 +124,14 @@ let formData = {
           name: "past-tests-details",
           type: "section",
           title: "Including your most recent test, please indicate which tests and how many you have had",
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
           questions: [{ //question      
             question: "Colonoscopy",
             description: "(Camera or tube inserted through the back passage)",
             name: "past-tests-details-colonscopy",
             type: "number",
-            value: 0
+            value: 0,
+            help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
           }, { //question      
             question: "Gastroscopy",
             description: "(Camera or tube inserted through the mouth into the stomach)",
@@ -196,7 +203,7 @@ let formData = {
           "Strongly disagree"
         ],
         prompts: [
-          "I was happy with the way I was referred for the test",
+          {prompt: "I was happy with the way I was referred for the test", help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."},
           "The time from first being referred to having the test done was satisfactory",
           "I felt able to change the appointment if it didn’t suit me"
         ]
@@ -208,7 +215,11 @@ let formData = {
         name: "isCancelledAppointment",
         type: "radio",
         options: [{
-          name: "Yes"
+          name: "Yes",
+          action: {
+            onchecked: true,
+            type: "end-survey"
+          }
         }, {
           name: "No"
         }, {
@@ -273,7 +284,11 @@ let formData = {
           name: "isCancelledAppointment",
           type: "radio",
           options: [{
-            name: "Yes"
+            name: "Yes",
+            action: {
+              onchecked: true,
+              type: "end-survey"
+            }
           }, {
             name: "No"
           }, {
@@ -428,7 +443,8 @@ let formData = {
             to: 10,
             startText: "No discomfort",
             endText: "Worst discomfort imaginable"
-          }
+          },
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }, { //question      
           question: "How long did the discomfort last during the test?",
           name: "e15",

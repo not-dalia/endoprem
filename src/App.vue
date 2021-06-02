@@ -34,10 +34,26 @@ body {
   margin: 0 !important;
 }
 
+.title-row {
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
 @media only screen and (max-width: 600px)  {
   body {
     // background-color #607d8b
     // padding 30px 0
+  }
+
+  .title-row {
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
   }
 }
 </style>

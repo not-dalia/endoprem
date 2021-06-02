@@ -1,6 +1,12 @@
 <template>
   <div class="date-field" :class="{subsection: eldata.subsection }"  :id="`form-el-${eldata.name}`" v-bind:value="value">
-    <label class="title">{{ eldata.question }}</label>
+    <div class="title-row">
+      <label class="title">
+        <span>{{ eldata.question }}</span>
+      </label>
+      <HelpText :text="eldata.help" />
+    </div>
+
     <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
     <div class="date-row">
       <div class="date-col">
@@ -44,9 +50,13 @@
 </template>
 
 <script>
+import HelpText from "@/components/HelpText.vue"
 export default {
   name: "DateField",
   props: ["eldata", "value"],
+  components: {
+    HelpText
+  },
   data() {
     return {
       today: new Date(),
@@ -102,6 +112,13 @@ li {
 
 a {
   color: #42b983;
+}
+
+.title-row {
+  font-size: 1.1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .title {
