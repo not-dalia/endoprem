@@ -1,16 +1,12 @@
 <template>
   <div class="ph-form">
-    <form
-      ref="phform"
-      name="pre-health"
-      id="ph-form"
-    >
+    <form ref="phform" name="pre-health" id="ph-form">
       <!-- <div class="page-num">Page {{currentPage + 1}} of {{formData.length}}</div> -->
       <ProgressBar
         :progress="(currentQuestion / formData[currentPage].length) * 100"
         :totalPages="formData.length - 1"
         :page="currentPage"
-        :color="color" 
+        :color="color"
       />
       <Page
         :id="`page-${currentPage}`"
@@ -19,6 +15,7 @@
         v-model="results"
         v-bind:key="currentPage"
         :current-question="currentQuestion"
+        :progressToNext="progressToNext"
       />
       <div class="footer">
         <div class="footer-nav">
@@ -30,7 +27,7 @@
               v-on:click="prevPage()"
               type="button"
               tabindex="1"
-              :style="{background: color}"
+              :style="{ background: color }"
             >
               <i class="fas fa-caret-left"></i>
               <span style="margin-left: 10px">Back</span>
@@ -41,14 +38,46 @@
               id="next-btn"
               ref="nextbtn"
               v-if="
+                (currentPage > 0 || currentQuestion > 0) && (
                 currentPage < formData.length - 1 ||
-                currentQuestion < formData[currentPage].length - 1
+                currentQuestion < formData[currentPage].length - 1)
               "
               v-on:click="nextPage()"
               type="button"
-              :style="{background: color}"
+              :style="{ background: color }"
+              :disabled="!enableNext"
             >
               <span style="margin-right: 10px">Next</span>
+              <i class="fas fa-caret-right"></i>
+            </button>
+
+            <button
+              id="next-btn"
+              ref="nextbtn"
+              v-if="!(currentPage > 0 || currentQuestion > 0)"
+              v-on:click="startNew()"
+              type="button"
+              :style="{ background: color }"
+              :disabled="!enableNext"
+            >
+              <span style="margin-right: 10px">Start new survey</span>
+              <i class="fas fa-caret-right"></i>
+            </button>
+          </div>
+          
+        </div>
+        <div class="footer-nav" style="margin-top: 10px; justify-content: flex-end;">
+          <div class="btn-container">
+            <button
+              id="clear-btn"
+              ref="clearbtn"
+              v-on:click="startFromSave()"
+              type="button"
+              tabindex="1"
+              v-if="!(currentPage > 0 || currentQuestion > 0)"
+              :style="{ background: color }"
+            >
+              <span style="margin-right: 10px">Continue saved survey</span>
               <i class="fas fa-caret-right"></i>
             </button>
           </div>
@@ -64,7 +93,7 @@
 <script>
 import Page from "@/components/Page.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
-import FormData from "@/data/"
+import FormData from "@/data/";
 
 export default {
   name: "PreHealthForm",
@@ -74,7 +103,7 @@ export default {
   },
   props: {
     msg: String,
-    type: String
+    type: String,
   },
   data() {
     return {
@@ -84,67 +113,87 @@ export default {
       currentQuestion: 0,
       results: {},
       isSurveyEnd: false,
-      color: '#009688',
+      color: "#009688",
       pagesToSkip: [],
-      endSurveyLocation: {page: null, question: null}
+      endSurveyLocation: { page: null, question: null },
+      enableNext: true
     };
   },
   watch: {
     results: {
       handler: function (val, oldVal) {
-        console.log(JSON.stringify(val))
+        console.log(JSON.stringify(val));
+        this.saveForm();
       },
       deep: true,
     },
   },
   mounted() {
-    switch( this.type ) {
+    switch (this.type) {
       case "before":
-        this.originalFormData = FormData.before.sections
-        this.color = FormData.before.color
-        break
+        this.originalFormData = FormData.before.sections;
+        this.color = FormData.before.color;
+        break;
       case "during":
-        this.originalFormData = FormData.during.sections
-        this.color = FormData.during.color
-        break
+        this.originalFormData = FormData.during.sections;
+        this.color = FormData.during.color;
+        break;
       case "after":
-        this.originalFormData = FormData.after.sections
-        this.color = FormData.after.color
-        break
+        this.originalFormData = FormData.after.sections;
+        this.color = FormData.after.color;
+        break;
       case "all":
-        this.originalFormData = FormData.all.sections
-        this.color = FormData.all.color
-        break
+        this.originalFormData = FormData.all.sections;
+        this.color = FormData.all.color;
+        break;
       default:
-        this.originalFormData = FormData.before.sections
-        this.color = FormData.before.color
-        break
+        this.originalFormData = FormData.before.sections;
+        this.color = FormData.before.color;
+        break;
     }
-    this.formData = JSON.parse(JSON.stringify(this.originalFormData))
+    this.formData = JSON.parse(JSON.stringify(this.originalFormData));
   },
-  created () {
-    this.$root.$on('endSurvey', this.endSurvey);
-    this.$root.$on('togglePage', this.togglePage);
-
+  created() {
+    this.$root.$on("endSurvey", this.endSurvey);
+    this.$root.$on("togglePage", this.togglePage);
   },
-  destroyed () {
-    this.$root.$off('togglePage', this.togglePage);
-    this.$root.$off('endSurvey', this.endSurvey)
+  destroyed() {
+    this.$root.$off("togglePage", this.togglePage);
+    this.$root.$off("endSurvey", this.endSurvey);
   },
   methods: {
+    startNew() {
+      this.results = {}
+      this.nextPage();
+    },
+    startFromSave() {
+      if (localStorage.results) this.results = JSON.parse(localStorage.results);
+      this.nextPage();
+    },
+    saveForm() {
+      localStorage.results = JSON.stringify(this.results);
+    },
     scrollToTop() {
       window.scrollTo(0, 0);
     },
     togglePage(data) {
-      if (this.pagesToSkip.indexOf(data.page) >= 0 ) {
-        this.pagesToSkip.splice(this.pagesToSkip.indexOf(data.page), 1)
-        this.formData.splice(data.page, 0, this.originalFormData[data.page])
+      if (this.pagesToSkip.indexOf(data.page) >= 0) {
+        this.pagesToSkip.splice(this.pagesToSkip.indexOf(data.page), 1);
+        this.formData.splice(data.page, 0, this.originalFormData[data.page]);
       } else {
-        this.pagesToSkip.push(data.page)
-        this.formData.splice(data.page, 1)
+        this.pagesToSkip.push(data.page);
+        this.formData.splice(data.page, 1);
       }
     },
     nextPage() {
+      this.enableNext = false;
+      this.$root.$emit("validate");
+    },
+    progressToNext(canProgress) {
+      this.enableNext = true;
+      if (!canProgress) {
+        return;
+      }
       if (
         !(
           this.currentPage < this.formData.length - 1 ||
@@ -152,10 +201,14 @@ export default {
         )
       )
         return;
-      
-      if (this.isSurveyEnd && this.currentPage == this.endSurveyLocation.page && this.currentQuestion == this.endSurveyLocation.question) {
-          this.currentPage = this.formData.length - 1;
-          this.currentQuestion = this.formData[this.currentPage].length - 1;
+
+      if (
+        this.isSurveyEnd &&
+        this.currentPage == this.endSurveyLocation.page &&
+        this.currentQuestion == this.endSurveyLocation.question
+      ) {
+        this.currentPage = this.formData.length - 1;
+        this.currentQuestion = this.formData[this.currentPage].length - 1;
         return;
       }
 
@@ -170,11 +223,12 @@ export default {
       // if (this.$refs.prevbtn && this.currentPage == this.formData.length - 1) this.$refs.prevbtn.focus()
     },
     prevPage() {
+      this.enableNext = true;
       if (!(this.currentPage > 0 || this.currentQuestion > 0)) return;
-      
+
       if (this.isSurveyEnd && this.currentPage == this.formData.length - 1) {
-          this.currentPage = this.endSurveyLocation.page;
-          this.currentQuestion = this.endSurveyLocation.question;
+        this.currentPage = this.endSurveyLocation.page;
+        this.currentQuestion = this.endSurveyLocation.question;
         return;
       }
 
@@ -186,10 +240,13 @@ export default {
       }
       this.scrollToTop();
     },
-    endSurvey: function(isSurveyEnd) {
-      this.isSurveyEnd = isSurveyEnd
-      this.endSurveyLocation = {page: isSurveyEnd ? this.currentPage : null, question: isSurveyEnd ? this.currentQuestion : null}
-    }
+    endSurvey: function (isSurveyEnd) {
+      this.isSurveyEnd = isSurveyEnd;
+      this.endSurveyLocation = {
+        page: isSurveyEnd ? this.currentPage : null,
+        question: isSurveyEnd ? this.currentQuestion : null,
+      };
+    },
   },
 };
 </script>
@@ -239,6 +296,10 @@ button {
 
   &:hover {
     background: #607d8b !important;
+  }
+
+  &:disabled {
+    background: #666 !important;
   }
 }
 

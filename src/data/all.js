@@ -18,12 +18,23 @@ let formData = {
         }]
       }, {
         title: "Your Details",
-        questions: [{ //question      
+        questions: [
+          { //question      
+            question: "What is your study ID?",
+            name: "studyId",
+            type: "text",
+            description: null,
+            help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
+          }, { //question      
           question: "When was your most recent test?",
           name: "testdate",
           type: "date",
           description: null,
-          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
+          validationRules: {
+            min: 0,
+            max: 120
+          }
         }]
       }, {
         title: "Your Details",
@@ -31,7 +42,11 @@ let formData = {
           question: "Please fill in your age (in years)",
           name: "age",
           type: "number",
-          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
+          validationRules: {
+            required: true,
+            min: 18
+          }
         }, {
           question: "Are you?",
           name: "gender",
@@ -41,7 +56,10 @@ let formData = {
           }, {
             name: "Female"
           }],
-          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
+          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
+          validationRules: {
+            required: true,
+          }
         }, { //question      
           question: "How many years of full time education you have completed?",
           name: "yearsofeducation",
@@ -119,7 +137,10 @@ let formData = {
             }
           }, {
             name: "No"
-          }]
+          }],
+          validationRules: {
+            required: true
+          }
         }, {
           name: "past-tests-details",
           type: "section",
@@ -131,7 +152,10 @@ let formData = {
             name: "past-tests-details-colonscopy",
             type: "number",
             value: 0,
-            help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
+            help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
+            validationRules: {
+              required: true
+            }
           }, { //question      
             question: "Gastroscopy",
             description: "(Camera or tube inserted through the mouth into the stomach)",
@@ -206,7 +230,10 @@ let formData = {
           {prompt: "I was happy with the way I was referred for the test", help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."},
           "The time from first being referred to having the test done was satisfactory",
           "I felt able to change the appointment if it didn’t suit me"
-        ]
+        ],
+        validationRules: {
+          required: true
+        }
       }]
     }, {
       title: "Before coming to hospital for your test",
@@ -277,7 +304,7 @@ let formData = {
       {
         title: "Preparing for your test",
         description: "In this section we would like to know about your experience of preparing for the test. Please answer all of the questions in this section by filling in the boxes or selecting the answer that applies to you."
-      }, {
+      }, /* {
         title: "Preparing for your test",
         questions: [{ //question      
           question: "My appointment was cancelled or changed by the hospital",
@@ -295,7 +322,7 @@ let formData = {
             name: "Not sure / can’t remember"
           }]
         }]
-      },
+      }, */
       {
         title: "Preparing for your test",
         questions: [{ //question      
@@ -443,6 +470,9 @@ let formData = {
             to: 10,
             startText: "No discomfort",
             endText: "Worst discomfort imaginable"
+          },
+          validationRules: {
+            required: true
           },
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }, { //question      

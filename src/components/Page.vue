@@ -1,10 +1,22 @@
 <template>
   <div class="page" :value="value" ref="page">
     <div class="section">
-      <div class="title" :style="{color: color}">{{page[currentQuestion].title}}</div>
+      <div class="title" :style="{ color: color }">
+        {{ page[currentQuestion].title }}
+      </div>
       <!-- <div class="separator"></div> -->
-      <div class="description" v-if="page[currentQuestion].description">{{page[currentQuestion].description}}</div>
-      <FormElement :id="`form-el-${currentQuestion}-${j}`" v-for="(q, j) in page[currentQuestion].questions" v-bind:key="`form-el-${currentQuestion}-${j}`" :formel="q" v-model="value[q.name]" :color="color"/>
+      <div class="description" v-if="page[currentQuestion].description">
+        {{ page[currentQuestion].description }}
+      </div>
+      <FormElement
+        :id="`form-el-${currentQuestion}-${j}`"
+        v-for="(q, j) in page[currentQuestion].questions"
+        v-bind:key="`form-el-${currentQuestion}-${j}`"
+        :formel="q"
+        v-model="value[q.name]"
+        :color="color"
+        :isValid="(isValid) => isElementValid(isValid, q.name)"
+      />
     </div>
 
     <!-- <div v-for="(section, i) in page" v-bind:key="`section-${i}`" class="section">
@@ -16,47 +28,111 @@
 </template>
 
 <script>
-import formData from '@/data/formData-pre.js'
-import FormElement from '@/components/FormElement.vue'
+import formData from "@/data/formData-pre.js";
+import FormElement from "@/components/FormElement.vue";
 export default {
-  name: 'Page',
-  props: ['page', 'value', 'currentQuestion', 'color'], 
+  name: "Page",
+  props: ["page", "value", "currentQuestion", "color", "progressToNext"],
   components: {
-    FormElement
+    FormElement,
   },
-  data () {
+  data() {
     return {
-      formData: null, 
+      formData: null,
       currentPage: 0,
       result: null,
-      defaultValues: {}
-    }
+      defaultValues: {},
+      isPageValid: false,
+      elementsValidation: {},
+      isNextRequested: false,
+      isDataValid: false,
+      validationCount: 0,
+    };
   },
-  mounted () {
-    this.formData = formData
-    if (this.$attrs.value != null) this.defaultValues = {...this.$attrs.value} 
+  mounted() {
+    this.formData = formData;
+    if (this.$attrs.value != null)
+      this.defaultValues = { ...this.$attrs.value };
+    this.populateValidationObject();
   },
   watch: {
     currentQuestion: function (val, oldVal) {
-      
+      if (val != oldVal) {
+        this.populateValidationObject();
+      }
+    },
+    isNextRequested: function (val, oldVal) {
+      if (val && Object.keys(this.elementsValidation).length == 0)
+        this.progressToNext(true);
+    },
+    // elementsValidation: {
+    validationCount: {
+      handler: function (val, oldVal) {
+        if (val >= Object.keys(this.elementsValidation).length) {
+          let isDataValid = true;
+          Object.keys(this.elementsValidation).forEach((key) => {
+            isDataValid = isDataValid && this.elementsValidation[key];
+          });
+          console.log("isdatavalid: " + isDataValid);
+          console.log(this.elementsValidation);
+          this.isDataValid = isDataValid;
+          if (this.isNextRequested) {
+            if (isDataValid) {
+              this.isNextRequested = false;
+              this.progressToNext(true);
+            } else {
+              this.isNextRequested = false;
+              this.progressToNext(false);
+            }
+          }
+        }
+      },
+      deep: true,
     },
     defaultValues: {
       handler: function (val, oldVal) {
-        this.$emit('input', this.defaultValues)
+        this.$emit("input", this.defaultValues);
       },
-      deep: true
-    }, 
+      deep: true,
+    },
     value: {
       handler: function (val, oldVal) {
         // console.log('result changed to: ' + val)
       },
-      deep: true
-    }
+      deep: true,
+    },
+  },
+  created() {
+    this.$root.$on("validate", this.requestNext);
+  },
+  beforeDestroy() {
+    this.$root.$off("validate", this.requestNext);
   },
   methods: {
-    
-  }
-}
+    populateValidationObject() {
+      let elementsValidation = {};
+      this.page[this.currentQuestion].questions &&
+        this.page[this.currentQuestion].questions.forEach((element) => {
+          if (
+            ["separator", "image", "video"].indexOf(element.type) < 0 &&
+            element.name
+          )
+            elementsValidation[element.name] = false;
+        });
+      this.elementsValidation = elementsValidation;
+    },
+    isElementValid(isValid, elementName) {
+      if (elementName) {
+        this.elementsValidation[elementName] = isValid;
+        this.validationCount++;
+      }
+    },
+    requestNext() {
+      this.isNextRequested = true;
+      this.validationCount = 0;
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -64,14 +140,17 @@ export default {
 h3 {
   margin: 40px 0 0;
 }
+
 ul {
   list-style-type: none;
   padding: 0;
 }
+
 li {
   display: inline-block;
   margin: 0 10px;
 }
+
 a {
   color: #42b983;
 }
@@ -82,10 +161,10 @@ a {
 
 .section {
   box-sizing: border-box;
-  background white
-  padding 20px 50px
-  max-width 1000px
-  margin 25px auto
+  background: white;
+  padding: 20px 50px;
+  max-width: 1000px;
+  margin: 25px auto;
   // filter drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.16))
   color: #555;
 }
@@ -115,15 +194,14 @@ a {
   line-height: 1.6rem;
 }
 
-@media only screen and (max-width: 600px)  {
+@media only screen and (max-width: 600px) {
   .section {
-    background white
-    padding 15px
-    max-width 100%
-    margin 25px auto
+    background: white;
+    padding: 15px;
+    max-width: 100%;
+    margin: 25px auto;
     // filter drop-shadow(0px 3px 6px rgba(0, 0, 0, 0.16))
     color: #555;
   }
 }
-
 </style>

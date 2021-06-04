@@ -28,7 +28,7 @@
             <div class="prompt-text">
               {{ prompt.prompt || prompt }}
             </div>
-              <span v-show="collapse.split(',')[pm] == 'false'">
+              <span>
                 <HelpText :text="prompt.help" />
               </span>
           </div>
