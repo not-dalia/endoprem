@@ -2,7 +2,7 @@
   <div class="likert-bar" :class="{subsection: eldata.subsection }" :id="`form-el-${eldata.name}`" v-bind:value="value">
     <div class="title-row">
       <label class="title">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
-      <HelpText :text="eldata.help" />
+      <HelpText :text="eldata.help" :name="eldata.name"/>
     </div>
     <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
     <div class="option-row">

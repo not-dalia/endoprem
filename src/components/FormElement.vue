@@ -4,6 +4,7 @@
     :class="{ 'sub-element': subelement, 'sub-section': formel.subsection }"
     :value="value"
     ref="formElement"
+        @focusout="handleFocusOut"
   >
     <div class="error">
       {{ error }}
@@ -80,6 +81,7 @@
 </template>
 
 <script>
+import epLogger from "@/logger.js"
 import { object, string, date, number, array, boolean } from "yup";
 import {
   Separator,
@@ -134,13 +136,15 @@ export default {
     this.$root.$off('validate', this.validate)
   },
   methods: {
+    handleFocusOut() {
+      epLogger(this.$cookies.get('endoprem_si'), {question: this.formel.name}, 'question_blur')
+    },
     async validate() {
       let o = {}
       o[this.formel.name] = this.elementValue
       try {
         if (this.formel.type != 'section') {
           let v = await this.validationSchema.validate(this.elementValue)
-          console.log(v)
           this.isValid(true)
           this.error = ""
         } 
@@ -181,12 +185,13 @@ export default {
       switch (elementType) {
         case "date":
             validationSchema = object({
-              day: number().min(1).max(31),
-              month: number().min(1).max(12),
+              day: number().transform(value => (isNaN(value) ? undefined : value)).min(1).max(31),
+              month: number().transform(value => (isNaN(value) ? undefined : value)).min(1).max(12),
               year: number().transform(value => (isNaN(value) ? undefined : value)).min(validationRules.max? new Date().getFullYear() - validationRules.max : new Date().getFullYear() - 120).max(validationRules.min? new Date().getFullYear() - validationRules.min : new Date().getFullYear())
             })
           break;
         case "text": case "long-text":
+          let stringVal = string();
           validationSchema = string();
           if (validationRules.required) validationSchema = validationSchema.required();
           else validationSchema = validationSchema.notRequired();

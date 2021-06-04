@@ -8,9 +8,10 @@
 </template>
 
 <script>
+import epLogger from '@/logger.js'
 export default {
   name: 'HelpText',
-  props: ["text"],
+  props: ["text", "name"],
   data() {
     return {
       isOpen: false
@@ -19,9 +20,11 @@ export default {
   methods: {
     toggleOpen() {
       this.isOpen = !this.isOpen;
+      if (this.isOpen) epLogger(this.$cookies.get('endoprem_si'), {question: this.name}, 'help_hint')
     },
     handleFocus() {
       this.isOpen = !this.isOpen;
+      if (this.isOpen) epLogger(this.$cookies.get('endoprem_si'), {question: this.name}, 'help_hint')
     },
     handleFocusOut() {
       this.isOpen = false;

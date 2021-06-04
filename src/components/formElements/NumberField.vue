@@ -5,7 +5,7 @@
         <span>{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</span>
       
       </label>
-      <HelpText :text="eldata.help" />
+      <HelpText :text="eldata.help" :name="eldata.name"/>
     </div>
     <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
     <div class="input-container">

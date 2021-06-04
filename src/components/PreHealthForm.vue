@@ -14,10 +14,27 @@
         :color="color"
         v-model="results"
         v-bind:key="currentPage"
+        :currentPage="currentPage"
         :current-question="currentQuestion"
         :progressToNext="progressToNext"
       />
       <div class="footer">
+        <div class="footer-nav" style="margin-bottom: 10px; justify-content: flex-end;" v-show="!(currentPage > 0 || currentQuestion > 0) && hasSavedResults">
+          <div class="btn-container">
+            <button
+              id="clear-btn"
+              ref="clearbtn"
+              v-on:click="startFromSave()"
+              type="button"
+              tabindex="1"
+              v-if="!(currentPage > 0 || currentQuestion > 0)"
+              :style="{ background: color }"
+            >
+              <span style="margin-right: 10px">Continue saved survey</span>
+              <i class="fas fa-caret-right"></i>
+            </button>
+          </div>
+        </div>
         <div class="footer-nav">
           <div class="btn-container prev">
             <button
@@ -66,22 +83,6 @@
           </div>
           
         </div>
-        <div class="footer-nav" style="margin-top: 10px; justify-content: flex-end;">
-          <div class="btn-container">
-            <button
-              id="clear-btn"
-              ref="clearbtn"
-              v-on:click="startFromSave()"
-              type="button"
-              tabindex="1"
-              v-if="!(currentPage > 0 || currentQuestion > 0)"
-              :style="{ background: color }"
-            >
-              <span style="margin-right: 10px">Continue saved survey</span>
-              <i class="fas fa-caret-right"></i>
-            </button>
-          </div>
-        </div>
         <!-- <div class="page-num">
           Page {{ currentPage + 1 }} of {{ formData.length }}
         </div> -->
@@ -116,7 +117,8 @@ export default {
       color: "#009688",
       pagesToSkip: [],
       endSurveyLocation: { page: null, question: null },
-      enableNext: true
+      enableNext: true,
+      hasSavedResults: false
     };
   },
   watch: {
@@ -129,6 +131,7 @@ export default {
     },
   },
   mounted() {
+    this.hasSavedResults = !!localStorage.results
     switch (this.type) {
       case "before":
         this.originalFormData = FormData.before.sections;

@@ -30,16 +30,16 @@
 <script>
 import formData from "@/data/formData-pre.js";
 import FormElement from "@/components/FormElement.vue";
+import epLogger from "@/logger.js"
 export default {
   name: "Page",
-  props: ["page", "value", "currentQuestion", "color", "progressToNext"],
+  props: ["page", "value", "currentQuestion", "color", "progressToNext", "currentPage"],
   components: {
     FormElement,
   },
   data() {
     return {
       formData: null,
-      currentPage: 0,
       result: null,
       defaultValues: {},
       isPageValid: false,
@@ -53,12 +53,20 @@ export default {
     this.formData = formData;
     if (this.$attrs.value != null)
       this.defaultValues = { ...this.$attrs.value };
+    epLogger(this.$cookies.get('endoprem_si'), {page: this.currentPage, question: this.currentQuestion}, 'page_load')
     this.populateValidationObject();
   },
   watch: {
     currentQuestion: function (val, oldVal) {
       if (val != oldVal) {
         this.populateValidationObject();
+        epLogger(this.$cookies.get('endoprem_si'), {page: this.currentPage, question: val}, 'page_load')
+      }
+    },
+    currentPage: function (val, oldVal) {
+      if (val != oldVal) {
+        this.populateValidationObject();
+        console.log('page changed')
       }
     },
     isNextRequested: function (val, oldVal) {
@@ -73,8 +81,6 @@ export default {
           Object.keys(this.elementsValidation).forEach((key) => {
             isDataValid = isDataValid && this.elementsValidation[key];
           });
-          console.log("isdatavalid: " + isDataValid);
-          console.log(this.elementsValidation);
           this.isDataValid = isDataValid;
           if (this.isNextRequested) {
             if (isDataValid) {

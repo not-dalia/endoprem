@@ -4,6 +4,19 @@
   </div>
 </template>
 
+<script>
+import { uuid } from 'vue-uuid';
+export default {
+  mounted() {
+    if (!this.$cookies.isKey('endoprem_si')) {
+      $cookies.set('endoprem_si', uuid.v4());
+    }
+  }
+}
+</script>
+
+
+
 <style lang="stylus">
 #app {
   font-family: canada-type-gibson, Helvetica, Arial, sans-serif;

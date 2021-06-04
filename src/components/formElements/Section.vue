@@ -9,7 +9,7 @@
       <div v-if="show">
         <div class="title-row">
           <div class="title" v-if="eldata.title">{{ eldata.title }}</div>
-          <HelpText :text="eldata.help" />
+          <HelpText :text="eldata.help" :name="eldata.name"/>
         </div>
         <div class="desc" v-if="eldata.description">
           {{ eldata.description }}
@@ -58,8 +58,6 @@ export default {
           Object.keys(this.elementsValidation).forEach((key) => {
             isDataValid = isDataValid && this.elementsValidation[key];
           });
-          console.log("isdatavalid: " + isDataValid);
-          console.log(this.elementsValidation);
           this.result.isSectionValid = isDataValid;
           this.isSectionValid(this.eldata.name, isDataValid);
         }

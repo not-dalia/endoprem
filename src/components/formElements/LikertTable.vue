@@ -29,7 +29,7 @@
               {{ prompt.prompt || prompt }}
             </div>
               <span>
-                <HelpText :text="prompt.help" />
+                <HelpText :text="prompt.help" :name="eldata.name"/>
               </span>
           </div>
           <div class="prompt-collapse" v-on:click="toggleExpand(pm)"  :style="{color: color}">
