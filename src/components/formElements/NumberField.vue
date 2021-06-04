@@ -2,7 +2,7 @@
   <div class="text-field" :class="{subsection: eldata.subsection }"  :id="`form-el-${eldata.name}`">
     <div class="title-row">
       <label :for="eldata.name" class="title">
-        <span>{{ eldata.question }}</span>
+        <span>{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</span>
       
       </label>
       <HelpText :text="eldata.help" />

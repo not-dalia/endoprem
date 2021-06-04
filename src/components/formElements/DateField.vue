@@ -2,7 +2,7 @@
   <div class="date-field" :class="{subsection: eldata.subsection }"  :id="`form-el-${eldata.name}`" v-bind:value="value">
     <div class="title-row">
       <label class="title">
-        <span>{{ eldata.question }}</span>
+        <span>{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</span>
       </label>
       <HelpText :text="eldata.help" />
     </div>

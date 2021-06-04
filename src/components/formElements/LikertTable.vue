@@ -5,7 +5,7 @@
     :id="`form-el-${eldata.name}`"
     v-bind:value="value"
   >
-    <label class="title">{{ eldata.question }}</label>
+    <label class="title">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
     <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
     <div class="table">
       <div class="table-row radio-group-labels">

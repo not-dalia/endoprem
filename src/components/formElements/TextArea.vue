@@ -1,6 +1,10 @@
 <template>
   <div class="text-area" :class="{subsection: eldata.subsection }"  :id="`form-el-${eldata.name}`">
-    <label :for="eldata.name" class="title">{{ eldata.question }}</label>
+    
+    <div class="title-row">
+      <label :for="eldata.name" class="title">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
+    <HelpText :text="eldata.help" />
+    </div>
     <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
     <div class="input-container">
       <textarea :name="eldata.name" :id="eldata.name" v-bind:value="value" v-on:input="$emit('input', $event.target.value)"></textarea>
@@ -10,9 +14,13 @@
 </template>
 
 <script>
+import HelpText from "@/components/HelpText.vue"
 export default {
   name: 'TextArea',
   props: ['eldata', 'value'], 
+  components: {
+    HelpText
+  },
   data () {
     return {
 

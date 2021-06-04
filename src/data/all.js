@@ -209,7 +209,8 @@ let formData = {
             question: "Please tell us more",
             name: "referred-other",
             type: "long-text",
-            description: null
+            description: null,
+            help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
           }]
         }]
       },
@@ -562,12 +563,6 @@ let formData = {
           ]
         }]
       },
-    ],
-    [ //sections
-      {
-        title: "Newcastle ENDOPREMTM: Patient Reported Experience Measure for Gastrointestinal Endoscopy",
-        description: "Thank you for agreeing to take part in this survey - we really appreciate you taking the time to complete this questionnaire about your experience of having an endoscopy (camera) test or CT colonoscopy (scan).\n\nThe survey will take about 10 - 15 minutes to complete. All of the questions are important so please try to answer them all. There are no right or wrong answers - we are just interested in hearing about your experience so we can make improvements to the way we deliver the service. \n\nIf you need help filling in the survey you can ask someone to help you."
-      }
     ],
     [ //sections
       {

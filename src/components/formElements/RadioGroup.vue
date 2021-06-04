@@ -1,7 +1,7 @@
 <template>
   <div class="radio-group" :class="{subsection: eldata.subsection }" :id="`form-el-${eldata.name}`" v-bind:value="value">
     <div class="title-row">
-      <label class="title">{{ eldata.question }}</label>
+      <label class="title">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
       <HelpText :text="eldata.help" />
     </div>
 
