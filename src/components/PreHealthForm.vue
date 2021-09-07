@@ -40,7 +40,7 @@
             <button
               id="prev-btn"
               ref="prevbtn"
-              v-if="currentPage > 0 || currentQuestion > 0"
+              v-if="(currentPage > 0 || currentQuestion > 0) && !isSubmitted "
               v-on:click="prevPage()"
               type="button"
               tabindex="1"
@@ -60,6 +60,7 @@
                 currentQuestion < formData[currentPage].length - 1)
               "
               v-on:click="nextPage()"
+              tabindex="0"
               type="button"
               :style="{ background: color }"
               :disabled="!enableNext"
@@ -80,6 +81,33 @@
               <span style="margin-right: 10px">Start new survey</span>
               <i class="fas fa-caret-right"></i>
             </button>
+
+            <button
+              id="submit-btn"
+              ref="submitbtn"
+              v-if="(currentPage > 0 || currentQuestion > 0) && !(
+                currentPage < formData.length - 1 ||
+                currentQuestion < formData[currentPage].length - 1) && isSubmitted && submissionId"
+              v-on:click="downloadCopy()"
+              type="button"
+              :style="{ background: color, marginRight: '10px'}"
+            >
+              <span>Download a copy</span>
+            </button>
+
+            <button
+              id="submit-btn"
+              ref="submitbtn"
+              v-if="(currentPage > 0 || currentQuestion > 0) && !(
+                currentPage < formData.length - 1 ||
+                currentQuestion < formData[currentPage].length - 1)"
+              v-on:click="submit()"
+              type="button"
+              :style="{ background: color }"
+              :disabled="!enableNext || isSubmitted"
+            >
+              <span>{{ isSubmitted ? 'Thanks!' : 'Submit Answers'}}</span>
+            </button>
           </div>
           
         </div>
@@ -95,6 +123,7 @@
 import Page from "@/components/Page.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
 import FormData from "@/data/";
+import { postSurvey, getSignedS3, getDownload } from '@/api.js';
 
 export default {
   name: "PreHealthForm",
@@ -118,20 +147,22 @@ export default {
       pagesToSkip: [],
       endSurveyLocation: { page: null, question: null },
       enableNext: true,
-      hasSavedResults: false
+      hasSavedResults: false,
+      isSubmitted: false,
+      pdfUrl: null,
+      submissionId: 0
     };
   },
   watch: {
     results: {
       handler: function (val, oldVal) {
-        console.log(JSON.stringify(val));
         this.saveForm();
       },
       deep: true,
     },
   },
   mounted() {
-    this.hasSavedResults = !!localStorage.results
+    this.hasSavedResults = !!localStorage.results && Object.keys(JSON.parse(localStorage.results)).length > 0
     switch (this.type) {
       case "before":
         this.originalFormData = FormData.before.sections;
@@ -165,16 +196,104 @@ export default {
     this.$root.$off("endSurvey", this.endSurvey);
   },
   methods: {
+    downloadCopy () {
+      let url = getDownload(this.submissionId, `${this.results.studyId.code1}${this.results.studyId.code2}${this.results.studyId.code3}`)
+      window.open(url)
+    },
+    async submit() {
+      console.log('results');
+      console.log(JSON.stringify(this.results))
+
+      let isSubmitted = await postSurvey({
+        data: JSON.stringify(this.results),
+        studyId: `${this.results.studyId.code1}${this.results.studyId.code2}${this.results.studyId.code3}`,
+        email: this.results.email,
+        sessionId: this.$cookies.get('endoprem_si'),
+      })
+      if (isSubmitted) {
+        this.submissionId = isSubmitted
+        this.isSubmitted = true;
+        localStorage.removeItem('location');
+        localStorage.removeItem('results');
+        this.hasSavedResults = false;
+        console.log("success");
+      }
+    },
+    base64ToBlob(data, contentType = "", sliceSize = 512) {
+      const byteCharacters = atob(data.split(',')[1]);
+      const byteArrays = [];
+
+      for (
+        let offset = 0;
+        offset < byteCharacters.length;
+        offset += sliceSize
+      ) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
+      const blob = new Blob(byteArrays, { type: contentType });
+      return blob;
+    },
+    getAudioObject(arr, obj, key='audio', tempPath=[]) {
+      let result = null;
+      let path = [...tempPath]
+      if(obj instanceof Array) {
+        for(var i = 0; i < obj.length; i++) {
+          path.push(i)
+          result = this.getAudioObject(arr, obj[i], key, path);
+          if (result) {
+            break;
+          }   
+        }
+      }
+      else
+      {
+        for(let prop in obj) {
+          if(prop == 'id') {
+            if(obj[prop, path] == 1) {
+              arr.push(obj)
+              return obj;
+            }
+          }
+          if(obj[prop] instanceof Object || obj[prop] instanceof Array) {
+            if (obj[prop][key]) {
+              arr.push([prop, obj[prop], [...path, prop]])
+            }
+            result = this.getAudioObject(arr, obj[prop], key, [...path, prop]);
+            if (result) {
+              break;
+            }
+          } 
+        }
+      }
+      return result;
+    },
     startNew() {
       this.results = {}
       this.nextPage();
     },
     startFromSave() {
       if (localStorage.results) this.results = JSON.parse(localStorage.results);
-      this.nextPage();
+      if (localStorage.location) {
+        let location = JSON.parse(localStorage.location);
+        this.currentPage = location.page;
+        this.currentQuestion = location.question;
+        this.enableNext = true;
+      } else this.nextPage();
     },
     saveForm() {
       localStorage.results = JSON.stringify(this.results);
+      localStorage.location = JSON.stringify({
+        page: this.currentPage,
+        question: this.currentQuestion
+      })
     },
     scrollToTop() {
       window.scrollTo(0, 0);
@@ -222,6 +341,10 @@ export default {
         this.currentPage++;
       }
       this.scrollToTop();
+      localStorage.location = JSON.stringify({
+        page: this.currentPage,
+        question: this.currentQuestion
+      })
       // if (this.$refs.nextbtn && this.currentPage == 0) this.$refs.nextbtn.focus()
       // if (this.$refs.prevbtn && this.currentPage == this.formData.length - 1) this.$refs.prevbtn.focus()
     },
@@ -242,6 +365,10 @@ export default {
         this.currentQuestion = this.formData[this.currentPage].length - 1;
       }
       this.scrollToTop();
+      localStorage.location = JSON.stringify({
+        page: this.currentPage,
+        question: this.currentQuestion
+      })
     },
     endSurvey: function (isSurveyEnd) {
       this.isSurveyEnd = isSurveyEnd;
@@ -330,7 +457,8 @@ button {
     }
 
     button {
-      // padding: 25px 15px;
+      padding: 15px 15px;
+      font-size: 0.9rem;
     }
   }
 }

@@ -27,7 +27,7 @@
         v-show="!audioSrc"
       >
         <span v-if="!isRecording" class="record-title">Record Audio</span>
-        <span v-if="isRecording" class="record-title">Recording...</span>
+        <span v-if="isRecording" class="record-title">Recording... {{getTimeInMinutes()}}</span>
         <img
           src="@/assets/microphone.svg"
           style="height: 1.3rem"
@@ -99,12 +99,15 @@ export default {
       isPlaying: false,
       textval: null,
       audioData: null,
+      currentFile: null,
+      timer: null,
+      audioTimer: 0
     };
   },
   created() {},
   mounted() {
     if (this.value && this.value.text) this.textval = this.value.text;
-    if (this.value && this.value.audio) {
+    if (this.value && this.value.audio && !this.audioData) {
       let blob = this.base64ToBlob(this.value.audio)
       this.onRecordingResult(blob);
     }
@@ -116,6 +119,7 @@ export default {
         this.$emit("input", {
           text: this.textval,
           audio: val,
+          audioTimer: this.audioTimer
         });
       },
       deep: true
@@ -125,16 +129,26 @@ export default {
         this.$emit("input", {
           text: val,
           audio: this.audioData,
+          audioTimer: this.audioTimer
         });
       },
     },
   },
+  beforeDestroy (to, from, next) {
+    this.$refs[`audio_${this.eldata.name}`] && this.$refs[`audio_${this.eldata.name}`].stop();
+    if(this.timer)
+        clearInterval(this.timer);
+  },
   methods: {
     onRecordingResult(data) {
       this.isRecording = false;
-      console.log("The blob data:", data);
+      // console.log("The blob data:", data);
       this.blobToBase64(data);
-      let src = window.URL.createObjectURL(data);
+      this.currentFile = data.slice(0, data.size, "audio/webm")
+      let src = window.URL.createObjectURL(this.currentFile);
+      // this.currentFile = new Blob(data, { name: `${Date.now()}-audio.${this.audioType}`, type: 'audio/wav' })
+      // data.type = 'audio/wav' 
+      console.log(this.currentFile)
       console.log("Downloadable audio", src);
       this.audioSrc = src;
     },
@@ -144,7 +158,7 @@ export default {
       reader.onloadend = () => {
         var base64data = reader.result;
         this.audioData = base64data;
-        console.log(this.audioData);
+        // console.log(this.audioData);
       };
     },
     base64ToBlob(data, contentType = "", sliceSize = 512) {
@@ -173,10 +187,26 @@ export default {
       this.isPlaying = false;
       if (this.isRecording) {
         this.$refs[`audio_${this.eldata.name}`].stop();
+        if(this.timer) clearInterval(this.timer);
       } else {
         this.isRecording = true;
         this.$refs[`audio_${this.eldata.name}`].start();
+        this.timer = this.setAudioTimer()
       }
+    },
+    setAudioTimer() {
+      this.audioTimer = 0
+      return setInterval(() => this.audioTimer++, 1000)
+    },
+    getTimeInMinutes () {
+      let value = this.audioTimer
+      let minutes = parseInt(Math.floor(value / 60)); 
+      let seconds= parseInt((value - (minutes * 60)) % 60); 
+
+      let dMins = (minutes > 9 ? minutes : '0' + minutes);
+      let dSecs = (seconds > 9 ? seconds : '0' + seconds);
+
+      return dMins + ":" + dSecs;
     },
     toggleAudioPlayback() {
       this.isRecording = false;

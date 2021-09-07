@@ -9,8 +9,9 @@ import LikertBar from './LikertBar'
 import CheckboxGroup from './CheckboxGroup'
 import Section from './Section'
 import FormImage from './FormImage'
+import StudyIdField from './StudyIdField'
 import FormVideo from './FormVideo'
 
 export {
-  Separator, TextField, NumberField, TextArea, DateField, RadioGroup, LikertTable, LikertBar, CheckboxGroup, Section, FormImage, FormVideo
+  Separator, TextField, NumberField, TextArea, DateField, RadioGroup, LikertTable, LikertBar, CheckboxGroup, Section, FormImage, FormVideo, StudyIdField
 }

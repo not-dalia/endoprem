@@ -1,5 +1,5 @@
 <template>
-  <div :class="`help-text ${isOpen? 'open-help-text' : ''}`" @focus="handleFocus"
+  <div :class="`help-text ${isOpen? 'open-help-text' : ''}`" v-on:click.stop @focus="handleFocus"
         @focusout="handleFocusOut"
         tabindex="0" v-show="text">
     <div class="question-mark-help-text">?</div>

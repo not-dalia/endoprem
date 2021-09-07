@@ -22,9 +22,12 @@ let formData = {
           { //question      
             question: "What is your study ID?",
             name: "studyId",
-            type: "text",
-            description: null,
-            help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
+            type: "studyid",
+            description: "Ex: NU  090003  123456789",
+            help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
+            validationRules: {
+              required: true
+            }
           }, { //question      
           question: "When was your most recent test?",
           name: "testdate",
@@ -44,7 +47,7 @@ let formData = {
           type: "number",
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
           validationRules: {
-            required: true,
+            // required: true,
             min: 18
           }
         }, {
@@ -57,9 +60,9 @@ let formData = {
             name: "Female"
           }],
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
-          validationRules: {
-            required: true,
-          }
+          // validationRules: {
+          //   required: true,
+          // }
         }, { //question      
           question: "How many years of full time education you have completed?",
           name: "yearsofeducation",
@@ -76,14 +79,14 @@ let formData = {
             name: "White",
             description: "(Including English/Welsh/Scottish, Northern Irish, British, Irish, Gypsy or Irish Traveller or any other White background)"
           }, {
-            name: "Mixed/Multiple ethnic groups",
+            name: "Mixed / Multiple ethnic groups",
             description: "(Including White and Black Caribbean, White and Black African, White and Asian or any other mixed/multiple ethnic background)"
           }, {
-            name: "Asian/British Asian",
+            name: "Asian / British Asian",
             description: "(Including Indian, Pakistani, Bangladeshi, Chinese or any other Asian background)"
           }, {
-            name: "Black/African/Caribbean/Black British",
-            description: "(Including Black African, Black Caribbean or any other Black/African/Caribbean background)"
+            name: "Black / African / Caribbean / Black British",
+            description: "(Including Black African, Black Caribbean or any other Black / African / Caribbean background)"
           }, {
             name: "Other ethnic group"
           }],
@@ -138,9 +141,9 @@ let formData = {
           }, {
             name: "No"
           }],
-          validationRules: {
-            required: true
-          }
+          // validationRules: {
+          //   required: true
+          // }
         }, {
           name: "past-tests-details",
           type: "section",
@@ -153,9 +156,9 @@ let formData = {
             type: "number",
             value: 0,
             help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
-            validationRules: {
-              required: true
-            }
+            // validationRules: {
+            //   required: true
+            // }
           }, { //question      
             question: "Gastroscopy",
             description: "(Camera or tube inserted through the mouth into the stomach)",
@@ -232,9 +235,9 @@ let formData = {
           "The time from first being referred to having the test done was satisfactory",
           "I felt able to change the appointment if it didn’t suit me"
         ],
-        validationRules: {
-          required: true
-        }
+        // validationRules: {
+        //   required: true
+        // }
       }]
     }, {
       title: "Before coming to hospital for your test",
@@ -472,9 +475,9 @@ let formData = {
             startText: "No discomfort",
             endText: "Worst discomfort imaginable"
           },
-          validationRules: {
-            required: true
-          },
+          // validationRules: {
+          //   required: true
+          // },
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }, { //question      
           question: "How long did the discomfort last during the test?",

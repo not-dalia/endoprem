@@ -77,6 +77,12 @@
       :color="color"
       v-model="elementValue"
     />
+    <StudyIdField
+      v-if="formel.type === 'studyid'"
+      :eldata="formel"
+      :color="color"
+      v-model="elementValue"
+    />
   </div>
 </template>
 
@@ -96,6 +102,7 @@ import {
   Section,
   FormImage,
   FormVideo,
+  StudyIdField,
 } from "@/components/formElements/index.js";
 export default {
   name: "FormElement",
@@ -113,6 +120,7 @@ export default {
     Section,
     FormImage,
     FormVideo,
+    StudyIdField
   },
   data() {
     return {
@@ -183,6 +191,21 @@ export default {
       let elementType = this.formel.type;
       let validationSchema = {};
       switch (elementType) {
+        case "studyid":
+          let code1 = string().length(2, 'Invalid study ID.')
+          let code2 = string().length(6, 'Invalid study ID.')
+          let code3 = string().length(9, 'Invalid study ID.')
+          if (validationRules.required) {
+            code1 = code1.required('Study ID is required.')
+            code2 = code2.required('Study ID is required.')
+            code3 = code3.required('Study ID is required.')
+          }
+            validationSchema = object({
+              code1,
+              code2,
+              code3
+            })
+          break;
         case "date":
             validationSchema = object({
               day: number().transform(value => (isNaN(value) ? undefined : value)).min(1).max(31),

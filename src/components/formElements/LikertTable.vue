@@ -23,7 +23,7 @@
         v-for="(prompt, pm) in eldata.prompts"
         v-bind:key="`${eldata.name}-row-${pm + 1}`"
       >
-        <div class="table-cell prompt">
+        <div class="table-cell prompt" v-on:click="collapse.split(',')[pm] && toggleExpand(pm)">
           <div class="title-row">
             <div class="prompt-text">
               {{ prompt.prompt || prompt }}
@@ -32,7 +32,7 @@
                 <HelpText :text="prompt.help" :name="eldata.name"/>
               </span>
           </div>
-          <div class="prompt-collapse" v-on:click="toggleExpand(pm)"  :style="{color: color}">
+          <div class="prompt-collapse" :style="{color: color}">
             <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[pm] == 'false', 'fa-chevron-down': collapse.split(',')[pm] == 'true'}"></i>
           </div>
         </div>
@@ -347,6 +347,8 @@ a {
 
   .table-row {
     border: none !important;
+    border-bottom: 1px solid #ccc !important;
+    margin-bottom: 1rem;
   }
 
   .table-cell {
@@ -397,8 +399,8 @@ a {
       font-size: 0.9rem;
       color: #009688;
       padding: 3px 20px 10px 20px;
-      border-bottom: 1px solid #ccc;
-      margin-bottom: 2rem;
+      // border-bottom: 1px solid #ccc;
+      // margin-bottom: 0.5rem;
     }
   }
 }

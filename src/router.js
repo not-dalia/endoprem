@@ -8,15 +8,15 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/:type',
+      path: '/',
       name: 'home',
       component: Home
-    },
-    {
-      path: '/',
-      name: 'placeholder',
-      component: Placeholder
     }
+    // {
+    //   path: '/',
+    //   name: 'placeholder',
+    //   component: Placeholder
+    // }
     // {
     //   path: '/about',
     //   name: 'about',

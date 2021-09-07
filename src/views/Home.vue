@@ -1,6 +1,6 @@
 <template>
   <div id="home">
-    <PreHealthForm :type="$route.params.type"/>
+    <PreHealthForm type="all"/>
   </div>
 </template>
 

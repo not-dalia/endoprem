@@ -9,6 +9,7 @@
     <div class="option-row" :class="{ col: getLength() > 10 }">
       <div
         class="option-col"
+        
         v-for="(option, oi) in eldata.options"
         v-bind:key="`${eldata.name}-option-${oi+1}`"
         v-on:click="selectOption(eldata.options[oi].name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())"
@@ -191,7 +192,11 @@ a {
         left: 0.75em;
         top: 0.75em;
       }
-      
+
+      input[type='radio']:focus + .checkmark {
+        box-shadow: 0 0 0 2px #f90;
+      }
+          
       .checkmark {
         border-radius: 100%;
         background: #fff;

@@ -30,10 +30,17 @@
 <script>
 import formData from "@/data/formData-pre.js";
 import FormElement from "@/components/FormElement.vue";
-import epLogger from "@/logger.js"
+import epLogger from "@/logger.js";
 export default {
   name: "Page",
-  props: ["page", "value", "currentQuestion", "color", "progressToNext", "currentPage"],
+  props: [
+    "page",
+    "value",
+    "currentQuestion",
+    "color",
+    "progressToNext",
+    "currentPage",
+  ],
   components: {
     FormElement,
   },
@@ -46,27 +53,35 @@ export default {
       elementsValidation: {},
       isNextRequested: false,
       isDataValid: false,
-      validationCount: 0,
+      validationCount: -1,
     };
   },
   mounted() {
     this.formData = formData;
     if (this.$attrs.value != null)
       this.defaultValues = { ...this.$attrs.value };
-    epLogger(this.$cookies.get('endoprem_si'), {page: this.currentPage, question: this.currentQuestion}, 'page_load')
+    epLogger(
+      this.$cookies.get("endoprem_si"),
+      { page: this.currentPage, question: this.currentQuestion },
+      "page_load"
+    );
     this.populateValidationObject();
   },
   watch: {
     currentQuestion: function (val, oldVal) {
       if (val != oldVal) {
         this.populateValidationObject();
-        epLogger(this.$cookies.get('endoprem_si'), {page: this.currentPage, question: val}, 'page_load')
+        epLogger(
+          this.$cookies.get("endoprem_si"),
+          { page: this.currentPage, question: val },
+          "page_load"
+        );
       }
     },
     currentPage: function (val, oldVal) {
       if (val != oldVal) {
         this.populateValidationObject();
-        console.log('page changed')
+        console.log("page changed");
       }
     },
     isNextRequested: function (val, oldVal) {
@@ -87,6 +102,7 @@ export default {
               this.isNextRequested = false;
               this.progressToNext(true);
             } else {
+              window.scrollTo(0, 0);
               this.isNextRequested = false;
               this.progressToNext(false);
             }
@@ -130,12 +146,19 @@ export default {
     isElementValid(isValid, elementName) {
       if (elementName) {
         this.elementsValidation[elementName] = isValid;
+        if (this.validationCount < 0) this.validationCount = 0;
         this.validationCount++;
       }
     },
     requestNext() {
-      this.isNextRequested = true;
-      this.validationCount = 0;
+      if (Object.keys(this.elementsValidation).length == 0) {
+        this.progressToNext(true);
+        this.isNextRequested = false;
+        this.validationCount = -1;
+      } else {
+        this.isNextRequested = true;
+        this.validationCount = -1;
+      }
     },
   },
 };

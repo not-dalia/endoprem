@@ -7,7 +7,7 @@
     <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
     <div class="input-container">
       <input type="text" :name="eldata.name" :id="eldata.name" v-bind:value="value" v-on:input="$emit('input', $event.target.value)"/>
-      <div class="mic"><span class="record-title">Record Audio</span><img src="@/assets/microphone.svg" style="height:1.3rem" alt="Record audio" title="Record audio"></div>
+      <!-- <div class="mic"><span class="record-title">Record Audio</span><img src="@/assets/microphone.svg" style="height:1.3rem" alt="Record audio" title="Record audio"></div> -->
     </div>
   </div>
 </template>
