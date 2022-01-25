@@ -213,8 +213,7 @@ export default {
               year: number().transform(value => (isNaN(value) ? undefined : value)).min(validationRules.max? new Date().getFullYear() - validationRules.max : new Date().getFullYear() - 120).max(validationRules.min? new Date().getFullYear() - validationRules.min : new Date().getFullYear())
             })
           break;
-        case "text": case "long-text":
-          let stringVal = string();
+        case "text":
           validationSchema = string();
           if (validationRules.required) validationSchema = validationSchema.required();
           else validationSchema = validationSchema.notRequired();
@@ -222,12 +221,27 @@ export default {
           if (validationRules.max) validationSchema = validationSchema.max(validationRules.max)
           if (validationRules.length) validationSchema = validationSchema.length(validationRules.length)
           break;
+        case "long-text":
+          validationSchema = object({
+            text: string().when('audio', ((audio, schema) => {
+              if (!audio || audio == "") {
+                if (validationRules.min) schema = schema.min(validationRules.min)
+                if (validationRules.max) schema = schema.max(validationRules.max)
+                if (validationRules.length) schema = schema.length(validationRules.length)
+                if (validationRules.required) schema = schema.required();
+                else schema = schema.notRequired();
+              }
+              return schema
+            })),
+            audio: string().nullable()
+          });
+
+          break;
         case "number":
           validationSchema = number().transform(value => (isNaN(value) ? undefined : value))
           if (validationRules.required) validationSchema = validationSchema.required()
           if (validationRules.min) validationSchema = validationSchema.min(validationRules.min)
           if (validationRules.max) validationSchema = validationSchema.max(validationRules.max)
-          if (validationRules.length) validationSchema = validationSchema.length(validationRules.length)
           break;
         case "likert-table":
           validationSchema = array().of(number().transform(value => (isNaN(value) ? 0 : value)).min(0).max(this.formel.options.length))

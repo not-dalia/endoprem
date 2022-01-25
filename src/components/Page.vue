@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import formData from "@/data/formData-pre.js";
 import FormElement from "@/components/FormElement.vue";
 import epLogger from "@/logger.js";
 export default {
@@ -46,7 +45,6 @@ export default {
   },
   data() {
     return {
-      formData: null,
       result: null,
       defaultValues: {},
       isPageValid: false,
@@ -57,7 +55,6 @@ export default {
     };
   },
   mounted() {
-    this.formData = formData;
     if (this.$attrs.value != null)
       this.defaultValues = { ...this.$attrs.value };
     epLogger(

@@ -123,17 +123,13 @@
 import Page from "@/components/Page.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
 import FormData from "@/data/";
-import { postSurvey, getSignedS3, getDownload } from '@/api.js';
+import { postSurvey, getDownload } from '@/api.js';
 
 export default {
   name: "PreHealthForm",
   components: {
     Page,
     ProgressBar,
-  },
-  props: {
-    msg: String,
-    type: String,
   },
   data() {
     return {
@@ -163,28 +159,8 @@ export default {
   },
   mounted() {
     this.hasSavedResults = !!localStorage.results && Object.keys(JSON.parse(localStorage.results)).length > 0
-    switch (this.type) {
-      case "before":
-        this.originalFormData = FormData.before.sections;
-        this.color = FormData.before.color;
-        break;
-      case "during":
-        this.originalFormData = FormData.during.sections;
-        this.color = FormData.during.color;
-        break;
-      case "after":
-        this.originalFormData = FormData.after.sections;
-        this.color = FormData.after.color;
-        break;
-      case "all":
-        this.originalFormData = FormData.all.sections;
-        this.color = FormData.all.color;
-        break;
-      default:
-        this.originalFormData = FormData.before.sections;
-        this.color = FormData.before.color;
-        break;
-    }
+    this.originalFormData = FormData.sections;
+    this.color = FormData.color;
     this.formData = JSON.parse(JSON.stringify(this.originalFormData));
   },
   created() {

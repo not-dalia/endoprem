@@ -1,6 +1,6 @@
 <template>
   <div class="form-image-container">
-    <img :src="eldata.src" alt="" class="form-image">
+    <img :src="eldata.src" :title="eldata.title" :alt="eldata.alt" class="form-image">
   </div>
 </template>
 

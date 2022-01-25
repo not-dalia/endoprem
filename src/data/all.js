@@ -41,23 +41,24 @@ let formData = {
         }]
       }, {
         title: "Your Details",
-        questions: [{ //question      
+        questions: [
+          { //question      
           question: "Please fill in your age (in years)",
           name: "age",
           type: "number",
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
           validationRules: {
             // required: true,
-            min: 18
+            min: 18,
           }
         }, {
           question: "Are you?",
           name: "gender",
           type: "radio",
           options: [{
-            name: "Male"
+            text: "Male",
           }, {
-            name: "Female"
+            text: "Female"
           }],
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
           // validationRules: {
@@ -76,19 +77,19 @@ let formData = {
           name: "ethnicity",
           type: "radio",
           options: [{
-            name: "White",
+            text: "White",
             description: "(Including English/Welsh/Scottish, Northern Irish, British, Irish, Gypsy or Irish Traveller or any other White background)"
           }, {
-            name: "Mixed / Multiple ethnic groups",
+            text: "Mixed / Multiple ethnic groups",
             description: "(Including White and Black Caribbean, White and Black African, White and Asian or any other mixed/multiple ethnic background)"
           }, {
-            name: "Asian / British Asian",
+            text: "Asian / British Asian",
             description: "(Including Indian, Pakistani, Bangladeshi, Chinese or any other Asian background)"
           }, {
-            name: "Black / African / Caribbean / Black British",
+            text: "Black / African / Caribbean / Black British",
             description: "(Including Black African, Black Caribbean or any other Black / African / Caribbean background)"
           }, {
-            name: "Other ethnic group"
+            text: "Other ethnic group"
           }],
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }]
@@ -99,9 +100,9 @@ let formData = {
           name: "whoiscompleting",
           type: "radio",
           options: [{
-            name: "I am completing this survey by myself"
+            text: "I am completing this survey by myself"
           }, {
-            name: "Someone is helping me complete the survey"
+            text: "Someone is helping me complete the survey"
           }]
         }]
       }, {
@@ -111,19 +112,19 @@ let formData = {
           name: "testtype",
           type: "radio",
           options: [{
-            name: "Colonoscopy",
+            text: "Colonoscopy",
             description: "(Camera or tube inserted through the back passage)"
           }, {
-            name: "Gastroscopy",
+            text: "Gastroscopy",
             description: "(Camera or tube inserted through the mouth into the stomach)"
           }, {
-            name: "Transnasal Gastroscopy",
+            text: "Transnasal Gastroscopy",
             description: "(Camera/tube inserted through the nose into the stomach)"
           }, {
-            name: "CT Colonoscopy",
+            text: "CT Colonoscopy",
             description: "(CT scan where a short tube is inserted into the back passage - done in the x-ray department)"
           }, {
-            name: "I’m not sure"
+            text: "I’m not sure"
           }]
         }]
       }, {
@@ -133,13 +134,13 @@ let formData = {
           name: "ispasttests",
           type: "radio",
           options: [{
-            name: "Yes",
+            text: "Yes",
             action: {
               onchecked: true,
               name: "past-tests-details"
             }
           }, {
-            name: "No"
+            text: "No"
           }],
           // validationRules: {
           //   required: true
@@ -192,13 +193,13 @@ let formData = {
           name: "referred",
           type: "radio",
           options: [{
-            name: "I was referred directly by my GP (without seeing a hospital doctor)",
+            text: "I was referred directly by my GP (without seeing a hospital doctor)",
           }, {
-            name: "The test was organised by a hospital doctor"
+            text: "The test was organised by a hospital doctor"
           }, {
-            name: "I have regular tests to monitor a medical condition/because of my family history"
+            text: "I have regular tests to monitor a medical condition/because of my family history"
           }, {
-            name: "I was referred in another way",
+            text: "I was referred in another way",
             action: {
               onchecked: true,
               name: "referred-details"
@@ -246,15 +247,15 @@ let formData = {
         name: "isCancelledAppointment",
         type: "radio",
         options: [{
-          name: "Yes",
+          text: "Yes",
           action: {
             onchecked: true,
             type: "end-survey"
           }
         }, {
-          name: "No"
+          text: "No"
         }, {
-          name: "Not sure / can’t remember"
+          text: "Not sure / can’t remember"
         }]
       }]
     }, {
@@ -315,15 +316,15 @@ let formData = {
           name: "isCancelledAppointment",
           type: "radio",
           options: [{
-            name: "Yes",
+            text: "Yes",
             action: {
               onchecked: true,
               type: "end-survey"
             }
           }, {
-            name: "No"
+            text: "No"
           }, {
-            name: "Not sure / can’t remember"
+            text: "Not sure / can’t remember"
           }]
         }]
       }, */
@@ -429,18 +430,18 @@ let formData = {
           name: "e4",
           type: "radio",
           options: [{
-            name: "Male"
+            text: "Male"
           }, {
-            name: "Female"
+            text: "Female"
           }]
         }, { //question      
           question: "The person doing the test was",
           name: "e5",
           type: "radio",
           options: [{
-            name: "Male"
+            text: "Male"
           }, {
-            name: "Female"
+            text: "Female"
           }]
         }]
       }, {
@@ -484,28 +485,28 @@ let formData = {
           name: "e15",
           type: "radio",
           options: [{
-            name: "I didn’t have discomfort"
+            text: "I didn’t have discomfort"
           }, {
-            name: "A short time"
+            text: "A short time"
           }, {
-            name: "A moderate time"
+            text: "A moderate time"
           }, {
-            name: "A long time"
+            text: "A long time"
           }]
         }, { //question      
           question: "How many times did you experience discomfort during the test?",
           name: "e16",
           type: "radio",
           options: [{
-            name: "None"
+            text: "None"
           }, {
-            name: "1 or 2 times"
+            text: "1 or 2 times"
           }, {
-            name: "3 or 4 times"
+            text: "3 or 4 times"
           }, {
-            name: "More than 4"
+            text: "More than 4"
           }, {
-            name: "Constantly"
+            text: "Constantly"
           }]
         }]
       }, {
@@ -525,28 +526,28 @@ let formData = {
           name: "e18",
           type: "radio",
           options: [{
-            name: "I didn’t have pain"
+            text: "I didn’t have pain"
           }, {
-            name: "A short time"
+            text: "A short time"
           }, {
-            name: "A moderate time"
+            text: "A moderate time"
           }, {
-            name: "A long time"
+            text: "A long time"
           }]
         }, { //question      
           question: "How many times did you experience pain during the test?",
           name: "e19",
           type: "radio",
           options: [{
-            name: "None"
+            text: "None"
           }, {
-            name: "1 or 2 times"
+            text: "1 or 2 times"
           }, {
-            name: "3 or 4 times"
+            text: "3 or 4 times"
           }, {
-            name: "More than 4"
+            text: "More than 4"
           }, {
-            name: "Constantly"
+            text: "Constantly"
           }]
         }]
       }, {
@@ -600,11 +601,11 @@ let formData = {
           type: "radio",
           question: "Have you received the results of your test?",
           options: [{
-            name: "Yes, I have received all of my test results",
+            text: "Yes, I have received all of my test results",
           }, {
-            name: "Yes, I have received some of my test results",
+            text: "Yes, I have received some of my test results",
           }, {
-            name: "No"
+            text: "No"
           }]
         }]
       }, {

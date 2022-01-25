@@ -1,6 +1,6 @@
 <template>
   <div id="home">
-    <PreHealthForm type="all"/>
+    <PreHealthForm />
   </div>
 </template>
 

@@ -12,20 +12,20 @@
         
         v-for="(option, oi) in eldata.options"
         v-bind:key="`${eldata.name}-option-${oi+1}`"
-        v-on:click="selectOption(eldata.options[oi].name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())"
+        v-on:click="selectOption(eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())"
       >
         <div class="option-label">
           <input
           type="radio"
           :name="`${eldata.name}-option`"
           :id="`${eldata.name}-option-${oi+1}`"
-          :value="eldata.options[oi].name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()"
-          :checked="selectedOption === eldata.options[oi].name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()"
+          :value="eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()"
+          :checked="selectedOption === (eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())"
           />
           <div class="checkmark">
             <div class="checked" :style="{background: color}"></div>
           </div>
-          <label :for="`${eldata.name}-option-${oi+1}`">{{option.name}}</label>
+          <label :for="`${eldata.name}-option-${oi+1}`">{{option.text}}</label>
         </div> 
         <div class="label-desc" v-if="option.description"> {{option.description}} </div>
       </div>
@@ -69,11 +69,11 @@ export default {
       if (!this.actionOption) return;
       let option = this.eldata.options[this.actionOption-1]
       let action = {
-        show: (option.action.onchecked && this.selectedOption == option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()) || (!option.action.onchecked && this.selectedOption != option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()),
+        show: (option.action.onchecked && this.selectedOption == (option.value || option.text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())) || (!option.action.onchecked && this.selectedOption != (option.value || option.text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())),
         element: option.action.name
       }
       this.$root.$emit('toggleElement', action);
-      if (option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase() == this.selectedOption && option.action.type == 'end-survey') {
+      if ((option.value || option.text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()) == this.selectedOption && option.action.type == 'end-survey') {
         this.endSurvey = true
         this.$root.$emit('endSurvey', true)
       } else {
@@ -84,10 +84,10 @@ export default {
     radioChanged (val, oldVal) {
       if (!this.actionOption) return;
       let option = this.eldata.options[this.actionOption-1]
-      if ((option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase() != val && option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase() != oldVal)) return;
+      if ( (option.value || option.text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()) != val && (option.value || option.text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()) != oldVal) return;
       if (option.action.name) {
         let action = {
-          show: (option.action.onchecked && this.selectedOption == option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()) || (!option.action.onchecked && this.selectedOption != option.name.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()),
+          show: (option.action.onchecked && this.selectedOption == (option.value || option.text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())) || (!option.action.onchecked && this.selectedOption != (option.value || option.text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())),
           element: option.action.name
         }
         this.$root.$emit('toggleElement', action);
@@ -103,8 +103,8 @@ export default {
     getLength() {
       let maxLength = 0;
       this.eldata.options.forEach(n => {
-        if (n.name.length > maxLength) {
-          maxLength = n.name.length;
+        if (n.text.length > maxLength) {
+          maxLength = n.text.length;
         }
       });
       return maxLength;

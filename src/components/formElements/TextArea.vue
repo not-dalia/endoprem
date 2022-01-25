@@ -25,6 +25,7 @@
         :class="`mic ${isRecording ? 'recording' : ''}`"
         @click="toggleAudioRecorder"
         v-show="!audioSrc"
+        v-if="eldata.canRecordAudio"
       >
         <span v-if="!isRecording" class="record-title">Record Audio</span>
         <span v-if="isRecording" class="record-title">Recording... {{getTimeInMinutes()}}</span>
@@ -40,7 +41,8 @@
           :ref="`audio_${eldata.name}`"
         />
       </div>
-      <div class="audio-controls" v-show="audioSrc">
+      <div class="audio-controls" v-show="audioSrc"         v-if="eldata.canRecordAudio"
+      >
         <div :class="`mic delete`" @click="deleteAudioFile" v-show="audioSrc">
           <img
             src="@/assets/delete.svg"
@@ -107,7 +109,7 @@ export default {
   created() {},
   mounted() {
     if (this.value && this.value.text) this.textval = this.value.text;
-    if (this.value && this.value.audio && !this.audioData) {
+    if (this.eldata && this.eldata.canRecordAudio && this.value && this.value.audio && !this.audioData) {
       let blob = this.base64ToBlob(this.value.audio)
       this.onRecordingResult(blob);
     }

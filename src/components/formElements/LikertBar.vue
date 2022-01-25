@@ -10,17 +10,17 @@
         class="option-cell"
         v-for="(option, oi) in options"
         v-bind:key="`${eldata.name}-option-${oi+1}`"
-        v-on:click="selectOption(oi+1)"
+        v-on:click="selectOption(oi)"
       >
         <div class="option-label">
           <input
           type="radio"
           :name="`${eldata.name}-option`"
           :id="`${eldata.name}-option-${oi+1}`"
-          :value="oi+1"
-          :checked="selectedOption === oi+1"
+          :value="option"
+          :checked="selectedOption === oi"
           />
-          <div class="checkmark" :style="{ background: (selectedOption === oi+1) ? color : 'inherit' }">
+          <div class="checkmark" :style="{ background: (selectedOption === oi) ? color : 'inherit' }">
             <label :for="`${eldata.name}-option-${oi+1}`">{{option}}</label>
           </div>
         </div> 
@@ -51,7 +51,7 @@ export default {
   },
   data() {
     return {
-      selectedOption: this.value,
+      selectedOption: null,
       actionOption: null,
       endSurvey: false,
       options: []
@@ -62,11 +62,11 @@ export default {
     for (let i = this.eldata.options.from; i <= this.eldata.options.to; i++) {
       this.options.push(i)
     }
-    if (this.value != null) this.selectedOption = this.value
+    if (this.value != null) this.selectedOption = this.options.indexOf(this.value)
   },
   watch: {
     selectedOption: function (val, oldVal) {
-      this.$emit('input', val);
+      this.$emit('input', this.options[val]);
     }
   },
   methods: {
