@@ -1,5 +1,29 @@
 # ENDOPREM
 
+* [Project Setup](#project-setup)
+  * [Compiles and hot-reloads for development](#compiles-and-hot-reloads-for-development)
+  * [Compiles and minifies for production](#compiles-and-minifies-for-production)
+* [Configuring Surveys](#configuring-surveys)
+  * [Survey Schema](#survey-schema)
+    * [pageSectionArray](#pagesectionarray)
+  * [pageObject](#pageobject)
+  * [questionObject](#questionobject)
+  * [Question Types](#question-types)
+    * [date](#date)
+    * [number](#number)
+    * [text](#text)
+    * [long-text](#long-text)
+    * [radio](#radio)
+    * [likert-table](#likert-table)
+    * [likert-bar](#likert-bar)
+    * [checkbox](#checkbox)
+    * [image](#image)
+    * [video](#video)
+    * [separator](#separator)
+    * [section](#section)
+  * [Creating Custom Question Types](#creating-custom-question-types)
+  * [Actions](#actions)
+
 ## Project Setup
 ```
 npm install
