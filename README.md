@@ -1,28 +1,31 @@
 # ENDOPREM
 
-* [Project Setup](#project-setup)
-  * [Compiles and hot-reloads for development](#compiles-and-hot-reloads-for-development)
-  * [Compiles and minifies for production](#compiles-and-minifies-for-production)
-* [Configuring Surveys](#configuring-surveys)
-  * [Survey Schema](#survey-schema)
-    * [pageSectionArray](#pagesectionarray)
-  * [pageObject](#pageobject)
-  * [questionObject](#questionobject)
-  * [Question Types](#question-types)
-    * [date](#date)
-    * [number](#number)
-    * [text](#text)
-    * [long-text](#long-text)
-    * [radio](#radio)
-    * [likert-table](#likert-table)
-    * [likert-bar](#likert-bar)
-    * [checkbox](#checkbox)
-    * [image](#image)
-    * [video](#video)
-    * [separator](#separator)
-    * [section](#section)
-  * [Creating Custom Question Types](#creating-custom-question-types)
-  * [Actions](#actions)
+- [Project Setup](#project-setup)
+  - [Compiles and hot-reloads for development](#compiles-and-hot-reloads-for-development)
+  - [Compiles and minifies for production](#compiles-and-minifies-for-production)
+- [Configuring Surveys](#configuring-surveys)
+  - [Survey Schema](#survey-schema)
+    - [pageSectionArray](#pagesectionarray)
+  - [pageObject](#pageobject)
+  - [questionObject](#questionobject)
+  - [Question Types](#question-types)
+    - [date](#date)
+    - [number](#number)
+    - [text](#text)
+    - [long-text](#long-text)
+    - [radio](#radio)
+    - [likert-table](#likert-table)
+    - [likert-bar](#likert-bar)
+    - [checkbox](#checkbox)
+    - [image](#image)
+    - [video](#video)
+    - [separator](#separator)
+    - [section](#section)
+  - [Creating Custom Question Types](#creating-custom-question-types)
+  - [Actions](#actions)
+- [Logging Interactions](#logging-interactions)
+- [Local Saving and Output Data](#local-saving-and-output-data)
+- [API endpoints](#api-endpoints)
 
 ## Project Setup
 ```
@@ -514,11 +517,41 @@ The following example shows two questions that are part of the same page. The fi
 ```
 <img src="doc-images/sectionaction.gif" alt="toggle section example" width="550">
 
+## Logging Interactions
+The project is configured to log some of the user's interactions by posting them to an endpoint. A **session cookie** is created to identify and link the interactions that are happening in one session to each other. **This might require a GDPR compliant cookie consent alert, which the project does not have at the moment**. If you would rather disable setting a session cookie, you can do so from `src/App.vue` by editing or completely removing the following bit of code:
+```js
+if (!this.$cookies.isKey('endoprem_si')) {
+  $cookies.set('endoprem_si', uuid.v4());
+}
+```
 
+The interaction types that are used within the project for now are `page_load`, `help_hint`, and `question_blur`.
+- `page_load` logs when a page was loaded.
+- `help_hint` logs when a user interacts with a question's hint icon.
+- `question_blur` logs when an input field or survey element loses focus, e.g. when a user clicks outside of a text area. 
 
-## TODO:
-Still need to write
-- how to log interactions
-- what output looks like
-- api endpoints
-- cookies and saving
+To log an interaction, you need to use `epLogger(sessionId, value, type)`.
+|   | Type                | Description  |
+| ------ | ------------------- | ------------ |
+| sessionId | <code>string</code> | The ID of the current user session. |
+| value | <code>object</code> | Any data related to the interaction that needs to be logged, e.g. page number or a question's unique ID. |
+| type | <code>string</code> | Interaction type. Can by any string, mainly used to group interactions in the logs.
+
+The following example shows how to log an interaction.
+```js
+import epLogger from "@/logger.js"
+...
+...
+
+epLogger(this.$cookies.get('endoprem_si'), {question: this.question.name}, 'question_blur')
+```
+
+## Local Saving and Output Data
+The `results` variable in `src/components/PreHealthForm.vue` holds the data that is filled in the survey. The data format is a flattened object made of each question's `name` and the value for that question. If a question has an undefined value or has not been filled it might not show as part of the output. 
+Whenever the `results` variable is updated, it is immediately saved on localStorage. It can be loaded next time the user attempts to fill the survey, or can be cleared if the user decides to start a new survey. Upon submitting the survey, the `results` data gets posted to an endpoint and the localStorage data is cleared if the submission was successful.
+
+## API endpoints
+The api helper `src/api.js` can be edited to interface with a different endpoint as long as it exports these methods:
+- `postInteraction(logObject: object)` - Tries to post log interactions to an endpoint.
+- `postSurvey(survey: object)` - Tries to post survey data to an endpoint. You might want to edit what data is being posted by the `submit` method in `src/components/PreHealthForm.vue`.
+- `getDownload(downloadId, submissionId)` - Expects a copy of the submitted data in a downloadable format. Called by `downloadCopy` in `src/components/PreHealthForm.vue`.

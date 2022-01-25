@@ -27,7 +27,7 @@ async function postSurvey(survey) {
   }
 }
 
-async function getSignedS3(file, result) {
+/* async function getSignedS3(file, result) {
   try {
     let response = await axios
       .get(`${HOST}/sign-s3?file-name=endoprem/${encodeURIComponent(file.filename||Date.now())}&file-type=${encodeURIComponent(file.type)}`)
@@ -60,11 +60,11 @@ async function uploadFile(file, signedRequest, url, result) {
     console.log(err);
     return false;
   }
-}
+} */
 
 export {
   postInteraction,
   postSurvey,
-  getSignedS3,
+  // getSignedS3,
   getDownload
 }

@@ -4,7 +4,7 @@
     :class="{ 'sub-element': subelement, 'sub-section': formel.subsection }"
     :value="value"
     ref="formElement"
-        @focusout="handleFocusOut"
+    @focusout="handleFocusOut"
   >
     <div class="error">
       {{ error }}
