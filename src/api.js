@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const HOST = 'https://api.endoprem.org'
+const HOST = process.env.VUE_APP_HOST
 
 function postInteraction(logItem) {
   axios.post(`${HOST}/interaction`, logItem)

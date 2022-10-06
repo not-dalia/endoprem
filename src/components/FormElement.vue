@@ -5,6 +5,7 @@
     :value="value"
     ref="formElement"
     @focusout="handleFocusOut"
+    v-if="formel.type != 'function'"
   >
     <div class="error">
       {{ error }}

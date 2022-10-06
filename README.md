@@ -513,7 +513,8 @@ The following example shows two questions that are part of the same page. The fi
       name: "referred-other",
       type: "text",
     }]
-  }]
+  }
+]
 ```
 <img src="doc-images/sectionaction.gif" alt="toggle section example" width="550">
 

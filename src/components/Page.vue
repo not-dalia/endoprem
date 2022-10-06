@@ -1,9 +1,9 @@
 <template>
   <div class="page" :value="value" ref="page">
     <div class="section">
-      <div class="title" :style="{ color: color }">
+      <h1 class="title" :style="{ color: color }">
         {{ page[currentQuestion].title }}
-      </div>
+      </h1>
       <!-- <div class="separator"></div> -->
       <div class="description" v-if="page[currentQuestion].description">
         {{ page[currentQuestion].description }}

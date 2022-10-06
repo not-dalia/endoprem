@@ -25,9 +25,9 @@ let formData = {
             type: "studyid",
             description: "Ex: NU  090003  123456789",
             help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
-            validationRules: {
+            /* validationRules: {
               required: true
-            }
+            } */
           }, { //question      
           question: "When was your most recent test?",
           name: "testdate",
@@ -44,21 +44,35 @@ let formData = {
         questions: [
           { //question      
           question: "Please fill in your age (in years)",
-          name: "age",
+          name: "A3",
           type: "number",
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
+          missingValue: 999,
           validationRules: {
             // required: true,
             min: 18,
           }
         }, {
+          name: "A3AgeGroups",
+          type: "function",
+          input: ["A3"],
+          missingValue: 999,
+          handler: (age) => {
+            if (age < 18 || age > 99) return 999
+            let decade = Math.floor(age/10)
+            if (decade == 1) decade = 2
+            return decade - 1
+          }
+        }, {
           question: "Are you?",
-          name: "gender",
+          name: "A4",
           type: "radio",
           options: [{
             text: "Male",
+            value: 1
           }, {
-            text: "Female"
+            text: "Female",
+            value: 2
           }],
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
           // validationRules: {
@@ -66,7 +80,7 @@ let formData = {
           // }
         }, { //question      
           question: "How many years of full time education you have completed?",
-          name: "yearsofeducation",
+          name: "A5",
           type: "number",
           help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
         }]
@@ -74,42 +88,48 @@ let formData = {
         title: "Your Details",
         questions: [{ //question      
           question: "To which of these ethnic groups would you say you belong?",
-          name: "ethnicity",
+          name: "A6",
           type: "radio",
           options: [{
             text: "White",
-            description: "(Including English/Welsh/Scottish, Northern Irish, British, Irish, Gypsy or Irish Traveller or any other White background)"
+            description: "(Including English/Welsh/Scottish, Northern Irish, British, Irish, Gypsy or Irish Traveller or any other White background)",
+            value: 1
           }, {
             text: "Mixed / Multiple ethnic groups",
-            description: "(Including White and Black Caribbean, White and Black African, White and Asian or any other mixed/multiple ethnic background)"
+            description: "(Including White and Black Caribbean, White and Black African, White and Asian or any other mixed/multiple ethnic background)",
+            value: 2
           }, {
             text: "Asian / British Asian",
-            description: "(Including Indian, Pakistani, Bangladeshi, Chinese or any other Asian background)"
+            description: "(Including Indian, Pakistani, Bangladeshi, Chinese or any other Asian background)",
+            value: 3
           }, {
             text: "Black / African / Caribbean / Black British",
-            description: "(Including Black African, Black Caribbean or any other Black / African / Caribbean background)"
+            description: "(Including Black African, Black Caribbean or any other Black / African / Caribbean background)",
+            value: 4
           }, {
-            text: "Other ethnic group"
-          }],
-          help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."
+            text: "Other ethnic group",
+            value: 5
+          }]
         }]
       }, {
         title: "Your Details",
         questions: [{ //question      
           question: "Please tell us if someone is helping you complete this survey",
-          name: "whoiscompleting",
+          name: "A7",
           type: "radio",
           options: [{
-            text: "I am completing this survey by myself"
+            text: "I am completing this survey by myself",
+            value: 1
           }, {
-            text: "Someone is helping me complete the survey"
+            text: "Someone is helping me complete the survey",
+            value: 2
           }]
         }]
       }, {
         title: "Your Details",
         questions: [{ //question      
           question: "Which test did you have on this occasion?",
-          name: "testtype",
+          name: "A8",
           type: "radio",
           options: [{
             text: "Colonoscopy",
@@ -126,21 +146,27 @@ let formData = {
           }, {
             text: "I’m not sure"
           }]
+        }, {
+          name: "A8NEW",
+          type: "function",
+          missingValue: 9
         }]
       }, {
         title: "Your Details",
         questions: [{ //question      
           question: "Have you had another camera test or CT scan in the past?",
-          name: "ispasttests",
+          name: "A9",
           type: "radio",
           options: [{
             text: "Yes",
+            value: 1,
             action: {
               onchecked: true,
               name: "past-tests-details"
             }
           }, {
-            text: "No"
+            text: "No",
+            value: 0
           }],
           // validationRules: {
           //   required: true
@@ -153,7 +179,7 @@ let formData = {
           questions: [{ //question      
             question: "Colonoscopy",
             description: "(Camera or tube inserted through the back passage)",
-            name: "past-tests-details-colonscopy",
+            name: "A9a2",
             type: "number",
             value: 0,
             help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
@@ -163,25 +189,25 @@ let formData = {
           }, { //question      
             question: "Gastroscopy",
             description: "(Camera or tube inserted through the mouth into the stomach)",
-            name: "past-tests-details-gastroscopy",
+            name: "A9b2",
             type: "number",
             value: 0
           }, { //question      
             question: "Transnasal Gastroscopy",
             description: "(Camera/tube inserted through the nose into the stomach)",
-            name: "past-tests-details-tg",
+            name: "A9c2",
             type: "number",
             value: 0
           }, { //question      
             question: "CT Colonoscopy",
             description: "(CT scan where a short tube is inserted into the back passage - done in the x-ray department)",
-            name: "past-tests-details-ctcolonscopy",
+            name: "A9D2",
             type: "number",
             value: 0
           }, { //question      
             question: "Flexible Sigmoidoscopy",
             description: "(Camera inserted through the back passage into the last part of the bowel only - usually only requires an enema)",
-            name: "past-tests-details-sigmoidoscopy",
+            name: "A9e2",
             type: "number",
             value: 0
           }]
@@ -194,12 +220,19 @@ let formData = {
           type: "radio",
           options: [{
             text: "I was referred directly by my GP (without seeing a hospital doctor)",
+            value: 1
           }, {
-            text: "The test was organised by a hospital doctor"
+            text: "The test was organised by a hospital doctor",
+            value: 2
           }, {
-            text: "I have regular tests to monitor a medical condition/because of my family history"
+            text: "I have regular tests to monitor a medical condition",
+            value: 3
+          },{
+            text: "I have regular tests because of my family history",
+            value: 4
           }, {
             text: "I was referred in another way",
+            value: 5,
             action: {
               onchecked: true,
               name: "referred-details"
@@ -213,6 +246,7 @@ let formData = {
             question: "Please tell us more",
             name: "referred-other",
             type: "long-text",
+            canRecordAudio: false,
             description: null,
             help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc.",
           }]
@@ -225,16 +259,19 @@ let formData = {
     }, {
       title: "Before coming to hospital for your test",
       questions: [{ //question      
-        name: "b1",
+        name: "B1",
         type: "likert-table",
-        options: ["Strongly agree", "Agree",
-          "Neither agree or disagree", "Disagree",
-          "Strongly disagree"
+        options: [
+          {text: "Strongly agree", value: "all"}, 
+          {text:"Agree", value: 2},
+          {text:"Neither agree or disagree", value: 3},
+          {text:"Disagree", value: 4},
+          {text:"Strongly disagree", value: 5} 
         ],
         prompts: [
-          {prompt: "I was happy with the way I was referred for the test", help: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque rhoncus vestibulum. Maecenas dapibus vestibulum semper. Proin eget tempus lacus. Mauris diam odio, tempus quis tempor interdum, porta eget nunc."},
-          "The time from first being referred to having the test done was satisfactory",
-          "I felt able to change the appointment if it didn’t suit me"
+          {prompt: "I was happy with the way I was referred for the test", name: "B1R"},
+          {prompt: "The time from first being referred to having the test done was satisfactory", name: "B2R"},
+          {prompt: "I felt able to change the appointment if it didn’t suit me", name: "B3R"}
         ],
         // validationRules: {
         //   required: true
@@ -654,6 +691,7 @@ let formData = {
           question: "If there is something else you would like to tell us about your test, please use the space below",
           name: "g2",
           type: "long-text",
+          canRecordAudio: false
         }]
       }
     ],

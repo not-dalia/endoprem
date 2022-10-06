@@ -3,11 +3,11 @@ import VueRouter from 'vue-router'
 import App from './App.vue'
 import router from './router'
 import VueCookies from 'vue-cookies'
-import VueRecord from '@codekraft-studio/vue-record'
+// import VueRecord from '@codekraft-studio/vue-record'
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
-Vue.use(VueRecord)
+// Vue.use(VueRecord)
 Vue.use(VueCookies)
 Vue.$cookies.config(0)
 

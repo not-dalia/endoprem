@@ -19,45 +19,35 @@
         :progressToNext="progressToNext"
       />
       <div class="footer">
-        <div class="footer-nav" style="margin-bottom: 10px; justify-content: flex-end;" v-show="!(currentPage > 0 || currentQuestion > 0) && hasSavedResults">
+        <div
+          class="footer-nav"
+          style="margin-bottom: 10px"
+          v-show="!(currentPage > 0 || currentQuestion > 0) && hasSavedResults"
+        >
           <div class="btn-container">
             <button
               id="clear-btn"
               ref="clearbtn"
               v-on:click="startFromSave()"
               type="button"
-              tabindex="1"
+              tabindex="0"
               v-if="!(currentPage > 0 || currentQuestion > 0)"
               :style="{ background: color }"
             >
-              <span style="margin-right: 10px">Continue saved survey</span>
+              <span style="margin-right: 10px;">Continue saved survey</span>
               <i class="fas fa-caret-right"></i>
             </button>
           </div>
         </div>
         <div class="footer-nav">
-          <div class="btn-container prev">
-            <button
-              id="prev-btn"
-              ref="prevbtn"
-              v-if="(currentPage > 0 || currentQuestion > 0) && !isSubmitted "
-              v-on:click="prevPage()"
-              type="button"
-              tabindex="1"
-              :style="{ background: color }"
-            >
-              <i class="fas fa-caret-left"></i>
-              <span style="margin-left: 10px">Back</span>
-            </button>
-          </div>
           <div class="btn-container next">
             <button
               id="next-btn"
               ref="nextbtn"
               v-if="
-                (currentPage > 0 || currentQuestion > 0) && (
-                currentPage < formData.length - 1 ||
-                currentQuestion < formData[currentPage].length - 1)
+                (currentPage > 0 || currentQuestion > 0) &&
+                (currentPage < formData.length - 1 ||
+                  currentQuestion < formData[currentPage].length - 1)
               "
               v-on:click="nextPage()"
               tabindex="0"
@@ -85,31 +75,54 @@
             <button
               id="submit-btn"
               ref="submitbtn"
-              v-if="(currentPage > 0 || currentQuestion > 0) && !(
-                currentPage < formData.length - 1 ||
-                currentQuestion < formData[currentPage].length - 1) && isSubmitted && submissionId"
-              v-on:click="downloadCopy()"
+              v-if="
+                (currentPage > 0 || currentQuestion > 0) &&
+                !(
+                  currentPage < formData.length - 1 ||
+                  currentQuestion < formData[currentPage].length - 1
+                ) &&
+                isSubmitted &&
+                submissionId
+              "
+              v-on:click="downloadCSV()"
               type="button"
-              :style="{ background: color, marginRight: '10px'}"
+              :style="{ background: color, marginRight: '10px' }"
             >
-              <span>Download a copy</span>
+              <span>Download CSV</span>
             </button>
 
             <button
               id="submit-btn"
               ref="submitbtn"
-              v-if="(currentPage > 0 || currentQuestion > 0) && !(
-                currentPage < formData.length - 1 ||
-                currentQuestion < formData[currentPage].length - 1)"
+              v-if="
+                (currentPage > 0 || currentQuestion > 0) &&
+                !(
+                  currentPage < formData.length - 1 ||
+                  currentQuestion < formData[currentPage].length - 1
+                )
+              "
               v-on:click="submit()"
               type="button"
               :style="{ background: color }"
               :disabled="!enableNext || isSubmitted"
             >
-              <span>{{ isSubmitted ? 'Thanks!' : 'Submit Answers'}}</span>
+              <span>{{ isSubmitted ? "Thanks!" : "Submit Answers" }}</span>
             </button>
           </div>
-          
+          <div class="btn-container prev">
+            <button
+              id="prev-btn"
+              ref="prevbtn"
+              v-if="(currentPage > 0 || currentQuestion > 0) && !isSubmitted"
+              v-on:click="prevPage()"
+              type="button"
+              tabindex="0"
+              :style="{ background: color }"
+            >
+              <i class="fas fa-caret-left"></i>
+              <span style="margin-left: 10px">Back</span>
+            </button>
+          </div>
         </div>
         <!-- <div class="page-num">
           Page {{ currentPage + 1 }} of {{ formData.length }}
@@ -123,7 +136,7 @@
 import Page from "@/components/Page.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
 import FormData from "@/data/";
-import { postSurvey, getDownload } from '@/api.js';
+import { postSurvey, getDownload } from "@/api.js";
 
 export default {
   name: "PreHealthForm",
@@ -146,7 +159,7 @@ export default {
       hasSavedResults: false,
       isSubmitted: false,
       pdfUrl: null,
-      submissionId: 0
+      submissionId: 0,
     };
   },
   watch: {
@@ -158,7 +171,9 @@ export default {
     },
   },
   mounted() {
-    this.hasSavedResults = !!localStorage.results && Object.keys(JSON.parse(localStorage.results)).length > 0
+    this.hasSavedResults =
+      !!localStorage.results &&
+      Object.keys(JSON.parse(localStorage.results)).length > 0;
     this.originalFormData = FormData.sections;
     this.color = FormData.color;
     this.formData = JSON.parse(JSON.stringify(this.originalFormData));
@@ -172,31 +187,65 @@ export default {
     this.$root.$off("endSurvey", this.endSurvey);
   },
   methods: {
-    downloadCopy () {
-      let url = getDownload(this.submissionId, `${this.results.studyId.code1}${this.results.studyId.code2}${this.results.studyId.code3}`)
-      window.open(url)
+    arrayToCsv(data) {
+      return data
+        .map(
+          (row) =>
+            row
+              .map(String) // convert every value to String
+              .map((v) => v.replaceAll('"', '""')) // escape double colons
+              .map((v) => `"${v}"`) // quote it
+              .join(",") // comma-separated
+        )
+        .join("\r\n"); // rows starting on new lines
+    },
+    downloadCSV() {
+      let finalResults = this.generateFinalResults(FormData, this.results)
+      let titleArray = []
+      let contentArray = []
+      for (let k in finalResults) {
+        titleArray.push(k)
+        contentArray.push(finalResults[k])
+      }
+      let content = this.arrayToCsv([titleArray, contentArray])
+
+      var blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+
+      var pom = document.createElement("a");
+      pom.href = url;
+      pom.setAttribute("download", `endoprem_${Date.now()}`);
+      pom.click();
+    },
+    downloadCopy() {
+      let url = getDownload(
+        this.submissionId,
+        `${this.results.studyId.code1}${this.results.studyId.code2}${this.results.studyId.code3}`
+      );
+      window.open(url);
     },
     async submit() {
-      console.log('results');
-      console.log(JSON.stringify(this.results))
+      console.log("results");
+      console.log(JSON.stringify(this.results));
 
-      let isSubmitted = await postSurvey({
+      /* let isSubmitted = await postSurvey({
         data: JSON.stringify(this.results),
         studyId: `${this.results.studyId.code1}${this.results.studyId.code2}${this.results.studyId.code3}`,
         email: this.results.email,
-        sessionId: this.$cookies.get('endoprem_si'),
-      })
+        sessionId: this.$cookies.get("endoprem_si"),
+      }); */
+      let isSubmitted = true;
       if (isSubmitted) {
-        this.submissionId = isSubmitted
+        this.submissionId = isSubmitted;
         this.isSubmitted = true;
-        localStorage.removeItem('location');
-        localStorage.removeItem('results');
+        // localStorage.removeItem("location");
+        // localStorage.removeItem("results");
         this.hasSavedResults = false;
         console.log("success");
       }
     },
     base64ToBlob(data, contentType = "", sliceSize = 512) {
-      const byteCharacters = atob(data.split(',')[1]);
+      const byteCharacters = atob(data.split(",")[1]);
       const byteArrays = [];
 
       for (
@@ -217,42 +266,40 @@ export default {
       const blob = new Blob(byteArrays, { type: contentType });
       return blob;
     },
-    getAudioObject(arr, obj, key='audio', tempPath=[]) {
+    getAudioObject(arr, obj, key = "audio", tempPath = []) {
       let result = null;
-      let path = [...tempPath]
-      if(obj instanceof Array) {
-        for(var i = 0; i < obj.length; i++) {
-          path.push(i)
+      let path = [...tempPath];
+      if (obj instanceof Array) {
+        for (var i = 0; i < obj.length; i++) {
+          path.push(i);
           result = this.getAudioObject(arr, obj[i], key, path);
           if (result) {
             break;
-          }   
+          }
         }
-      }
-      else
-      {
-        for(let prop in obj) {
-          if(prop == 'id') {
-            if(obj[prop, path] == 1) {
-              arr.push(obj)
+      } else {
+        for (let prop in obj) {
+          if (prop == "id") {
+            if (obj[(prop, path)] == 1) {
+              arr.push(obj);
               return obj;
             }
           }
-          if(obj[prop] instanceof Object || obj[prop] instanceof Array) {
+          if (obj[prop] instanceof Object || obj[prop] instanceof Array) {
             if (obj[prop][key]) {
-              arr.push([prop, obj[prop], [...path, prop]])
+              arr.push([prop, obj[prop], [...path, prop]]);
             }
             result = this.getAudioObject(arr, obj[prop], key, [...path, prop]);
             if (result) {
               break;
             }
-          } 
+          }
         }
       }
       return result;
     },
     startNew() {
-      this.results = {}
+      this.results = {};
       this.nextPage();
     },
     startFromSave() {
@@ -266,10 +313,88 @@ export default {
     },
     saveForm() {
       localStorage.results = JSON.stringify(this.results);
+      localStorage.flattenedResults = JSON.stringify(
+        this.generateFinalResults(FormData, this.results)
+      );
       localStorage.location = JSON.stringify({
         page: this.currentPage,
-        question: this.currentQuestion
-      })
+        question: this.currentQuestion,
+      });
+    },
+    generateFinalResults(questionnaire, results) {
+      let finalResult = {};
+      let pages = questionnaire.sections.flat();
+      pages.forEach((page) => {
+        let questions = page.questions;
+        if (!questions) return;
+        let questionResults = this.generateResultsFromQuestions(
+          questions,
+          results,
+          true
+        );
+        finalResult = { ...questionResults, ...finalResult };
+      });
+      for (let k in finalResult) {
+        if (typeof finalResult[k] === "object" && finalResult[k] !== null) {
+          let inputs =
+            (finalResult[k].input &&
+              finalResult[k].input.map((e) => finalResult[e])) ||
+            [];
+          try {
+            let result =
+              finalResult[k].handler && finalResult[k].handler(...inputs);
+            finalResult[k] = result || finalResult[k].missingValue;
+          } catch (error) {
+            console.warn(error);
+            finalResult[k] = finalResult[k].missingValue;
+          }
+        }
+      }
+      return finalResult;
+    },
+    generateResultsFromQuestions(questions, results, isPageValid) {
+      let finalResult = {};
+      questions.forEach((question) => {
+        if (
+          ["separator", "image", "video"].includes(question.type) ||
+          !question.name
+        )
+          return;
+        if (question.type == "section") {
+          let sectionResults = this.generateResultsFromQuestions(
+            question.questions,
+            results[question.name],
+            results[question.name] && results[question.name].isSectionValid
+          );
+          finalResult = { ...finalResult, ...sectionResults };
+        } else if (["text", "long-text"].includes(question.type)) {
+          finalResult[question.name] =
+            (isPageValid &&
+              results[question.name] &&
+              results[question.name].text) ||
+            question.missingValue;
+        } else if (["likert-table"].includes(question.type)) {
+          for (let k in question.prompts) {
+            let prompt = question.prompts[k];
+            let questionName = prompt.name || question.name + "_" + k;
+            finalResult[questionName] =
+              (isPageValid &&
+                results[question.name] &&
+                results[question.name][prompt.name || k]) ||
+              prompt.missingValue ||
+              question.missingValue;
+          }
+        } else if (["function"].includes(question.type)) {
+          finalResult[question.name] = (!isPageValid &&
+            question.missingValue) || { ...question };
+        } else {
+          {
+            finalResult[question.name] =
+              (isPageValid && results[question.name]) || question.missingValue;
+          }
+        }
+      });
+      return finalResult;
     },
     scrollToTop() {
       window.scrollTo(0, 0);
@@ -319,8 +444,8 @@ export default {
       this.scrollToTop();
       localStorage.location = JSON.stringify({
         page: this.currentPage,
-        question: this.currentQuestion
-      })
+        question: this.currentQuestion,
+      });
       // if (this.$refs.nextbtn && this.currentPage == 0) this.$refs.nextbtn.focus()
       // if (this.$refs.prevbtn && this.currentPage == this.formData.length - 1) this.$refs.prevbtn.focus()
     },
@@ -343,8 +468,8 @@ export default {
       this.scrollToTop();
       localStorage.location = JSON.stringify({
         page: this.currentPage,
-        question: this.currentQuestion
-      })
+        question: this.currentQuestion,
+      });
     },
     endSurvey: function (isSurveyEnd) {
       this.isSurveyEnd = isSurveyEnd;
@@ -416,7 +541,7 @@ button {
     box-sizing: border-box;
     margin: 0 auto;
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     justify-content: space-between;
   }
 

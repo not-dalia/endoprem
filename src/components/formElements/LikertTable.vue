@@ -15,15 +15,15 @@
           v-for="(option, oi) in eldata.options"
           v-bind:key="`${eldata.name}-label-${oi + 1}`"
         >
-          {{ option }}
+          {{ option.text || option }}
         </div>
       </div>
       <div
-        :class="{collapse: collapse.split(',')[pm] == 'true', 'table-row': true, 'radio-group-data': true}"
+        :class="{collapse: collapse.split(',')[prompt.name || pm] == 'true', 'table-row': true, 'radio-group-data': true}"
         v-for="(prompt, pm) in eldata.prompts"
         v-bind:key="`${eldata.name}-row-${pm + 1}`"
       >
-        <div class="table-cell prompt" v-on:click="collapse.split(',')[pm] && toggleExpand(pm)">
+        <div class="table-cell prompt" v-on:click="collapse.split(',')[prompt.name || pm] && toggleExpand(prompt.name || pm)">
           <div class="title-row">
             <div class="prompt-text">
               {{ prompt.prompt || prompt }}
@@ -33,11 +33,11 @@
               </span>
           </div>
           <div class="prompt-collapse" :style="{color: color}">
-            <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[pm] == 'false', 'fa-chevron-down': collapse.split(',')[pm] == 'true'}"></i>
+            <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[prompt.name || pm] == 'false', 'fa-chevron-down': collapse.split(',')[prompt.name || pm] == 'true'}"></i>
           </div>
         </div>
-        <div class="selected-label" v-if="selectedOptions[pm]" :style="{color: color}">
-          {{ eldata.options[selectedOptions[pm]-1] }}
+        <div class="selected-label" v-if="selectedOptions[prompt.name || pm]" :style="{color: color}">
+          {{ eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm]))&&eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm])).text || eldata.options[selectedOptions[prompt.name || pm]-1]  }}
         </div>
         <div
           class="table-cell radio-group-cell option-cell"
@@ -46,20 +46,20 @@
         >
           <div
             class="option-row"
-            v-on:click="selectOption(pm, oi + 1)"
+            v-on:click="selectOption(pm, prompt.name || pm, (option.value || (oi + 1)))"
           >
             <input
               type="radio"
               :name="`${eldata.name}-option-${pm + 1}`"
               :id="`${eldata.name}-option-${pm + 1}-${oi + 1}`"
-              :value="oi + 1"
-              :checked="selectedOptions[pm] === oi + 1"
+              :value="option.value || (oi + 1)"
+              :checked="selectedOptions[prompt.name || pm] == (option.value || (oi + 1))"
               v-on:click="closeExpand(pm)"
             />
             <div class="checkmark">
               <div class="checked" :style="{background: color}"></div>
             </div>
-            <label class="likert-labels" :for="`${eldata.name}-option-${pm + 1}-${oi + 1}`">{{ option }}</label>
+            <label class="likert-labels" :for="`${eldata.name}-option-${pm + 1}-${oi + 1}`">{{ option.text || option }}</label>
           </div>
         </div>
       </div>
@@ -78,14 +78,14 @@ export default {
   data() {
     return {
       today: new Date(),
-      selectedOptions: this.value || [],
+      selectedOptions: this.value || {},
       collapse: '',
       lastChange: 0
     };
   },
   mounted() {
     if (this.value != null) this.selectedOptions = this.value;
-    else this.selectedOptions = []
+    else this.selectedOptions = {}
     var collapse = []
     this.eldata.prompts.forEach(() => collapse.push(false))
     this.collapse = collapse.join(',')
@@ -94,6 +94,7 @@ export default {
     selectedOptions: {
       handler: function (val, oldVal) {
         this.$emit("input", val);
+        // this.$emit("input", Object.keys(val).map(e => this.eldata.options[val[e] -1]&&this.eldata.options[val[e] -1].value || val[e]));
       },
       deep: true
     },
@@ -110,10 +111,11 @@ export default {
       collapse[row] = true
       this.collapse = collapse.join(',')
     },
-    selectOption(row, option) {
-      let selectedOptions = [...this.selectedOptions]
-      selectedOptions[row] = option;
-      this.selectedOptions = [...selectedOptions]
+    selectOption(row, key, option) {
+      console.log('selecting ' + option)
+      let selectedOptions = {...this.selectedOptions}
+      selectedOptions[key] = option;
+      this.selectedOptions = {...selectedOptions}
       this.closeExpand(row)
     },
   },
