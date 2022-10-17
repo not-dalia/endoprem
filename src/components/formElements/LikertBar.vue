@@ -20,7 +20,7 @@
           :value="option"
           :checked="selectedOption === oi"
           />
-          <div class="checkmark" :style="{ background: (selectedOption === oi) ? color : 'inherit' }">
+          <div class="checkmark" :class="{ 'check-selected': (selectedOption === oi) ? true : false}">
             <label :for="`${eldata.name}-option-${oi+1}`">{{option}}</label>
           </div>
         </div> 
@@ -45,7 +45,7 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "LikertBar",
-  props: ["eldata", "value", "color"],
+  props: ["eldata", "value"],
   components: {
     HelpText
   },
@@ -156,13 +156,22 @@ a {
         margin: auto;
         cursor: pointer;
         text-align: center;
+        
+        .check-selected {
+          background: $theme-color;
+        }
       }
 
       input[type='radio']:checked ~ .checkmark {
-          background: #009688;
+          background: $theme-color;
           label {
             color: white;
           }
+      }
+
+      input[type='radio']:focus ~ .checkmark, input[type='radio']:active ~ .checkmark {
+        outline: 2px solid #f90;
+        outline-offset: -2px;
       }
 
       label {

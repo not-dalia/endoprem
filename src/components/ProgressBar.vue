@@ -58,7 +58,7 @@ export default {
 
   .bar-fill {
     height: 10px;
-    background: #009688;
+    background: $theme-color;
     box-sizing: border-box;
     position: absolute;
     left: 0;
@@ -83,7 +83,7 @@ export default {
     transform: translate(-50%, -8px);
 
     &.done {
-      background: #009688;
+      background: $theme-color;
       color: white;
     }
   }

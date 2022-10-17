@@ -13,7 +13,8 @@ let formData = {
         description: "Please answer all of the questions in this section by filling in the boxes or selecting the answer that applies to you.",
         questions: [{
           type: 'image',
-          src: '/images/fillingform.jpg'
+          src: '/images/fillingform.jpg',
+          alt: ''
           // src: 'https://www.youtube-nocookie.com/embed/wK2imf6w8Pw'
         }]
       }, {
@@ -392,7 +393,8 @@ let formData = {
         description: "In this section we would like to know about your experience of arriving at the hospital, getting ready and waiting for the test. Please answer all of the questions in this section by selecting the answers that apply to you.",
         questions: [{
           type: 'image',
-          src: '/images/waiting.jpg'
+          src: '/images/waiting.jpg',
+          alt: ''
           // src: 'https://www.youtube-nocookie.com/embed/wK2imf6w8Pw'
         }]
       }, {
@@ -433,7 +435,8 @@ let formData = {
         description: "In this section we would like to know about your experience of the test, from arriving in the procedure room until it was time to leave the procedure room.  Please answer all of the questions in this section by selecting the answers that apply to you.",
         questions: [{
           type: 'image',
-          src: '/images/medical1.jpg'
+          src: '/images/medical1.jpg',
+          alt: ''
           // src: 'https://www.youtube-nocookie.com/embed/wK2imf6w8Pw'
         }]
       }, {
@@ -611,7 +614,8 @@ let formData = {
         description: "In this section we would like to know about your experience after the test including the results, if you’ve had them. Please answer all of the questions in this section by selecting the answers that apply to you.",
         questions: [{
           type: 'image',
-          src: '/images/after.jpg'
+          src: '/images/after.jpg',
+          alt: ''
           // src: 'https://www.youtube-nocookie.com/embed/wK2imf6w8Pw'
         }]
       },

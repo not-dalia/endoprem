@@ -14,74 +14,62 @@
     <TextField
       v-if="formel.type === 'text'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <NumberField
       v-if="formel.type === 'number'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <TextArea
       v-if="formel.type === 'long-text'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <DateField
       v-if="formel.type === 'date'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <RadioGroup
       v-if="formel.type === 'radio'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <LikertTable
       v-if="formel.type === 'likert-table'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <LikertBar
       v-if="formel.type === 'likert-bar'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <CheckboxGroup
       v-if="formel.type === 'checkbox'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <Section
       v-if="formel.type === 'section'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
       :isSectionValid="isSectionValid"
     />
     <FormImage
       v-if="formel.type === 'image'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <FormVideo
       v-if="formel.type === 'video'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
     <StudyIdField
       v-if="formel.type === 'studyid'"
       :eldata="formel"
-      :color="color"
       v-model="elementValue"
     />
   </div>
@@ -107,7 +95,7 @@ import {
 } from "@/components/formElements/index.js";
 export default {
   name: "FormElement",
-  props: ["formel", "subelement", "value", "color", "isValid"],
+  props: ["formel", "subelement", "value", "isValid"],
   components: {
     Separator,
     TextField,

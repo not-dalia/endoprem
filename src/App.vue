@@ -18,6 +18,7 @@ export default {
 
 
 <style lang="stylus">
+@import '~@/theme/variables.styl';
 #app {
   font-family: canada-type-gibson, Helvetica, Arial, sans-serif;
   font-weight: 300;

@@ -19,11 +19,11 @@
         </div>
       </div>
       <div
-        :class="{collapse: collapse.split(',')[prompt.name || pm] == 'true', 'table-row': true, 'radio-group-data': true}"
+        :class="{collapse: collapse.split(',')[pm] == 'true', 'table-row': true, 'radio-group-data': true}"
         v-for="(prompt, pm) in eldata.prompts"
         v-bind:key="`${eldata.name}-row-${pm + 1}`"
       >
-        <div class="table-cell prompt" v-on:click="collapse.split(',')[prompt.name || pm] && toggleExpand(prompt.name || pm)">
+        <div class="table-cell prompt" v-on:click="collapse.split(',')[pm] && toggleExpand(pm)">
           <div class="title-row">
             <div class="prompt-text">
               {{ prompt.prompt || prompt }}
@@ -32,11 +32,11 @@
                 <HelpText :text="prompt.help" :name="eldata.name"/>
               </span>
           </div>
-          <div class="prompt-collapse" :style="{color: color}">
+          <div class="prompt-collapse">
             <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[prompt.name || pm] == 'false', 'fa-chevron-down': collapse.split(',')[prompt.name || pm] == 'true'}"></i>
           </div>
         </div>
-        <div class="selected-label" v-if="selectedOptions[prompt.name || pm]" :style="{color: color}">
+        <div class="selected-label" v-if="selectedOptions[prompt.name || pm]">
           {{ eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm]))&&eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm])).text || eldata.options[selectedOptions[prompt.name || pm]-1]  }}
         </div>
         <div
@@ -57,7 +57,7 @@
               v-on:click="closeExpand(pm)"
             />
             <div class="checkmark">
-              <div class="checked" :style="{background: color}"></div>
+              <div class="checked"></div>
             </div>
             <label class="likert-labels" :for="`${eldata.name}-option-${pm + 1}-${oi + 1}`">{{ option.text || option }}</label>
           </div>
@@ -71,7 +71,7 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "LikertTable",
-  props: ["eldata", "value", "color"],
+  props: ["eldata", "value"],
   components: {
     HelpText
   },
@@ -159,6 +159,7 @@ a {
 
   .prompt-collapse {
     display: none;
+    color: $theme-color;
   }
 
   .prompt-text {
@@ -220,6 +221,10 @@ a {
     display: none;
   }
 
+  .selected-label {
+    color: $theme-color;
+  }
+
   // .collapse {
   //   .option-cell {
   //     display: block;
@@ -258,13 +263,14 @@ a {
           width: 0;
           height: 0;
           padding: 0;
+          background: $theme-color;
         }
       }
 
       input[type='radio']:checked ~ .checkmark {
         .checked {
           border-radius: 100%;
-          background: #009688;
+          background: $theme-color;
           border: none;
           width: 14px;
           height: 14px;
@@ -332,7 +338,7 @@ a {
     bottom: 0;
     right: 0.15rem;
     cursor: pointer;
-    color: #009688;
+    color: $theme-color;
   }
 
   .table-row, .table-cell {
@@ -399,7 +405,7 @@ a {
       display: block !important;
       font-weight: 500;
       font-size: 0.9rem;
-      color: #009688;
+      color: $theme-color;
       padding: 3px 20px 10px 20px;
       // border-bottom: 1px solid #ccc;
       // margin-bottom: 0.5rem;

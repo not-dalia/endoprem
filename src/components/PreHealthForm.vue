@@ -6,12 +6,10 @@
         :progress="(currentQuestion / formData[currentPage].length) * 100"
         :totalPages="formData.length - 1"
         :page="currentPage"
-        :color="color"
       />
       <Page
         :id="`page-${currentPage}`"
         :page="formData[currentPage]"
-        :color="color"
         v-model="results"
         v-bind:key="currentPage"
         :currentPage="currentPage"
@@ -32,7 +30,6 @@
               type="button"
               tabindex="0"
               v-if="!(currentPage > 0 || currentQuestion > 0)"
-              :style="{ background: color }"
             >
               <span style="margin-right: 10px;">Continue saved survey</span>
               <i class="fas fa-caret-right"></i>
@@ -52,7 +49,6 @@
               v-on:click="nextPage()"
               tabindex="0"
               type="button"
-              :style="{ background: color }"
               :disabled="!enableNext"
             >
               <span style="margin-right: 10px">Next</span>
@@ -65,7 +61,6 @@
               v-if="!(currentPage > 0 || currentQuestion > 0)"
               v-on:click="startNew()"
               type="button"
-              :style="{ background: color }"
               :disabled="!enableNext"
             >
               <span style="margin-right: 10px">Start new survey</span>
@@ -86,7 +81,7 @@
               "
               v-on:click="downloadCSV()"
               type="button"
-              :style="{ background: color, marginRight: '10px' }"
+              :style="{ marginRight: '10px' }"
             >
               <span>Download CSV</span>
             </button>
@@ -103,7 +98,6 @@
               "
               v-on:click="submit()"
               type="button"
-              :style="{ background: color }"
               :disabled="!enableNext || isSubmitted"
             >
               <span>{{ isSubmitted ? "Thanks!" : "Submit Answers" }}</span>
@@ -117,7 +111,6 @@
               v-on:click="prevPage()"
               type="button"
               tabindex="0"
-              :style="{ background: color }"
             >
               <i class="fas fa-caret-left"></i>
               <span style="margin-left: 10px">Back</span>
@@ -152,7 +145,7 @@ export default {
       currentQuestion: 0,
       results: {},
       isSurveyEnd: false,
-      color: "#009688",
+      // color: "#009688",
       pagesToSkip: [],
       endSurveyLocation: { page: null, question: null },
       enableNext: true,
@@ -175,7 +168,7 @@ export default {
       !!localStorage.results &&
       Object.keys(JSON.parse(localStorage.results)).length > 0;
     this.originalFormData = FormData.sections;
-    this.color = FormData.color;
+    // this.color = FormData.color;
     this.formData = JSON.parse(JSON.stringify(this.originalFormData));
   },
   created() {
@@ -524,9 +517,16 @@ button {
   font-weight: 800;
   cursor: pointer;
   color: white;
+  background: $theme-color;
 
   &:hover {
-    background: #607d8b !important;
+    // background: #607d8b !important;
+    background: darken($theme-color, 15%) !important;
+  }
+
+  &:focus, &:active {
+    outline: medium solid #f90;
+    outline-offset: 2px;
   }
 
   &:disabled {

@@ -12,7 +12,10 @@
         
         v-for="(option, oi) in eldata.options"
         v-bind:key="`${eldata.name}-option-${oi+1}`"
-        v-on:click="selectOption(eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())"
+        v-on:click="() => {
+          selectOption(eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())
+          focus(`#${eldata.name}-option-${oi+1}`)
+        }"
       >
         <div class="option-label">
           <input
@@ -23,7 +26,7 @@
           :checked="selectedOption === (eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())"
           />
           <div class="checkmark">
-            <div class="checked" :style="{background: color}"></div>
+            <div class="checked"></div>
           </div>
           <label :for="`${eldata.name}-option-${oi+1}`">{{option.text}}</label>
         </div> 
@@ -37,7 +40,7 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "RadioGroup",
-  props: ["eldata", "value", "color"],
+  props: ["eldata", "value"],
   components: {
     HelpText
   },
@@ -65,6 +68,9 @@ export default {
     }
   },
   methods: {
+    focus (elementId) {
+      document.querySelector(elementId) && document.querySelector(elementId).focus()
+    },
     initialize () {
       if (!this.actionOption) return;
       let option = this.eldata.options[this.actionOption-1]
@@ -193,8 +199,10 @@ a {
         top: 0.75em;
       }
 
-      input[type='radio']:focus + .checkmark {
-        box-shadow: 0 0 0 2px #f90;
+      input[type='radio']:focus + .checkmark, input[type='radio']:active + .checkmark {
+        // box-shadow: 0 0 0 2px #f90;
+        outline: 2px solid #f90;
+        // outline-offset: 1px;
       }
           
       .checkmark {
@@ -214,13 +222,14 @@ a {
           width: 0;
           height: 0;
           padding: 0;
+          background: $theme-color;
         }
       }
 
       input[type='radio']:checked ~ .checkmark {
         .checked {
           border-radius: 100%;
-          background: #009688;
+          background: $theme-color;
           border: none;
           width: 14px;
           height: 14px;

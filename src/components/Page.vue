@@ -199,7 +199,7 @@ a {
   font-weight: 500;
   font-size: 1.8rem;
   text-align: left;
-  color: #009688;
+  color: $theme-color;
   margin-bottom: 1rem;
 }
 

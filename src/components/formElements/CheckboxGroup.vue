@@ -181,12 +181,13 @@ a {
           width: 0;
           height: 0;
           padding: 0;
+          background: $theme-color;
         }
       }
 
       input[type='checkbox']:checked ~ .checkmark {
         .checked {
-          background: #009688;
+          background: $theme-color;
           border: none;
           width: 14px;
           height: 14px;
