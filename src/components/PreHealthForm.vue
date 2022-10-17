@@ -19,7 +19,7 @@
       <div class="footer">
         <div
           class="footer-nav"
-          style="margin-bottom: 10px"
+          style="margin-bottom: 10px; justify-content: flex-end;"
           v-show="!(currentPage > 0 || currentQuestion > 0) && hasSavedResults"
         >
           <div class="btn-container">
@@ -37,7 +37,20 @@
           </div>
         </div>
         <div class="footer-nav">
-          <div class="btn-container next">
+          <div class="btn-container prev">
+            <button
+              id="prev-btn"
+              ref="prevbtn"
+              v-if="(currentPage > 0 || currentQuestion > 0) && !isSubmitted"
+              v-on:click="prevPage()"
+              type="button"
+              tabindex="0"
+            >
+              <i class="fas fa-caret-left"></i>
+              <span style="margin-left: 10px">Back</span>
+            </button>
+          </div>
+                    <div class="btn-container next">
             <button
               id="next-btn"
               ref="nextbtn"
@@ -101,19 +114,6 @@
               :disabled="!enableNext || isSubmitted"
             >
               <span>{{ isSubmitted ? "Thanks!" : "Submit Answers" }}</span>
-            </button>
-          </div>
-          <div class="btn-container prev">
-            <button
-              id="prev-btn"
-              ref="prevbtn"
-              v-if="(currentPage > 0 || currentQuestion > 0) && !isSubmitted"
-              v-on:click="prevPage()"
-              type="button"
-              tabindex="0"
-            >
-              <i class="fas fa-caret-left"></i>
-              <span style="margin-left: 10px">Back</span>
             </button>
           </div>
         </div>
@@ -519,9 +519,17 @@ button {
   color: white;
   background: $theme-color;
 
+  &#prev-btn {
+    background: slategrey;
+    &:hover {
+      // background: #607d8b !important;
+      background: darken(slategrey, 20%) !important;
+    }
+  }
+
   &:hover {
     // background: #607d8b !important;
-    background: darken($theme-color, 15%) !important;
+    background: darken($theme-color, 20%) !important;
   }
 
   &:focus, &:active {
@@ -541,7 +549,7 @@ button {
     box-sizing: border-box;
     margin: 0 auto;
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     justify-content: space-between;
   }
 

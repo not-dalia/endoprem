@@ -23,7 +23,14 @@
         v-for="(prompt, pm) in eldata.prompts"
         v-bind:key="`${eldata.name}-row-${pm + 1}`"
       >
-        <div class="table-cell prompt" v-on:click="collapse.split(',')[pm] && toggleExpand(pm)">
+        <div class="table-cell prompt"
+          v-on:click="collapse.split(',')[pm] && toggleExpand(pm)"
+          v-on:keyup.enter.space.prevent="collapse.split(',')[pm] && toggleExpand(pm)"
+          v-on:keypress.enter.space.prevent
+          tabindex="0"
+          role="button"
+          :aria-expanded="collapse.split(',')[pm] == 'false' || 'false'" 
+         >
           <div class="title-row">
             <div class="prompt-text">
               {{ prompt.prompt || prompt }}
@@ -33,7 +40,7 @@
               </span>
           </div>
           <div class="prompt-collapse">
-            <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[prompt.name || pm] == 'false', 'fa-chevron-down': collapse.split(',')[prompt.name || pm] == 'true'}"></i>
+            <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[pm] == 'false', 'fa-chevron-down': collapse.split(',')[pm] == 'true'}"></i>
           </div>
         </div>
         <div class="selected-label" v-if="selectedOptions[prompt.name || pm]">
@@ -47,6 +54,8 @@
           <div
             class="option-row"
             v-on:click="selectOption(pm, prompt.name || pm, (option.value || (oi + 1)))"
+            v-on:mouseup="closeExpand(pm)"
+            v-on:touchend="closeExpand(pm)"
           >
             <input
               type="radio"
@@ -54,7 +63,6 @@
               :id="`${eldata.name}-option-${pm + 1}-${oi + 1}`"
               :value="option.value || (oi + 1)"
               :checked="selectedOptions[prompt.name || pm] == (option.value || (oi + 1))"
-              v-on:click="closeExpand(pm)"
             />
             <div class="checkmark">
               <div class="checked"></div>
@@ -107,6 +115,7 @@ export default {
       console.log(this.collapse)
     },
     closeExpand(row) {
+      console.log('closing')
       var collapse = this.collapse.split(',')
       collapse[row] = true
       this.collapse = collapse.join(',')
@@ -116,7 +125,7 @@ export default {
       let selectedOptions = {...this.selectedOptions}
       selectedOptions[key] = option;
       this.selectedOptions = {...selectedOptions}
-      this.closeExpand(row)
+      // this.closeExpand(row)
     },
   },
 };
@@ -243,6 +252,12 @@ a {
         position: absolute;
         left: 0.75em;
         top: 0.75em;
+      }
+
+      input[type='radio']:focus + .checkmark, input[type='radio']:active + .checkmark {
+        // box-shadow: 0 0 0 2px #f90;
+        outline: 2px solid #f90;
+        // outline-offset: 1px;
       }
 
       .checkmark {

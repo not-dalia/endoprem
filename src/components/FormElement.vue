@@ -6,7 +6,7 @@
     ref="formElement"
     @focusout="handleFocusOut"
     v-if="formel.type != 'function'"
-  >
+    >
     <div class="error">
       {{ error }}
     </div>
@@ -119,11 +119,12 @@ export default {
     };
   },
   mounted() {
-    if (document.querySelector("input"))
+    /* if (document.querySelector("input"))
       document.querySelector("input").focus();
     else if (document.querySelector("textarea"))
-      document.querySelector("textarea").focus();
-
+      document.querySelector("textarea").focus(); */
+    // document.querySelector("form").focus();
+    // document.querySelector("form").firstChild.focus();
     this.buildValidationSchema();
   },
   created(){

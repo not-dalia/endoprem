@@ -63,6 +63,7 @@ export default {
       "page_load"
     );
     this.populateValidationObject();
+    document.querySelector('body').focus()
   },
   watch: {
     currentQuestion: function (val, oldVal) {
@@ -73,12 +74,13 @@ export default {
           { page: this.currentPage, question: val },
           "page_load"
         );
+        document.querySelector('body').focus()
+        console.log('focusing')
       }
     },
     currentPage: function (val, oldVal) {
       if (val != oldVal) {
         this.populateValidationObject();
-        console.log("page changed");
       }
     },
     isNextRequested: function (val, oldVal) {
