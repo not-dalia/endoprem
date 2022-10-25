@@ -520,10 +520,10 @@ button {
   background: $theme-color;
 
   &#prev-btn {
-    background: slategrey;
+    background: #6B768A;
     &:hover {
       // background: #607d8b !important;
-      background: darken(slategrey, 20%) !important;
+      background: darken(#6B768A, 20%) !important;
     }
   }
 

@@ -6,6 +6,7 @@ import VueCookies from 'vue-cookies'
 // import VueRecord from '@codekraft-studio/vue-record'
 
 Vue.config.productionTip = false
+Vue.config.unwrapInjectedRef = true
 Vue.use(VueRouter)
 // Vue.use(VueRecord)
 Vue.use(VueCookies)

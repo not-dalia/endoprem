@@ -5,10 +5,10 @@
     :id="`form-el-${eldata.name}`"
     v-bind:value="value"
   >
-    <label class="title">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
+    <label class="title" v-if="eldata.question || (eldata.validationRules && eldata.validationRules.required)">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
     <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
     <div class="table">
-      <div class="table-row radio-group-labels">
+      <div class="table-row radio-group-labels" aria-hidden="true">
         <div class="table-cell empty-cell"></div>
         <div
           class="table-cell radio-group-label"
@@ -22,19 +22,20 @@
         :class="{collapse: collapse.split(',')[pm] == 'true', 'table-row': true, 'radio-group-data': true}"
         v-for="(prompt, pm) in eldata.prompts"
         v-bind:key="`${eldata.name}-row-${pm + 1}`"
+        role="radiogroup"
       >
         <div class="table-cell prompt"
           v-on:click="collapse.split(',')[pm] && toggleExpand(pm)"
           v-on:keyup.enter.space.prevent="collapse.split(',')[pm] && toggleExpand(pm)"
           v-on:keypress.enter.space.prevent
-          tabindex="0"
-          role="button"
-          :aria-expanded="collapse.split(',')[pm] == 'false' || 'false'" 
+          :tabindex="windowSize > 650 ? null : 0"
+          :role="windowSize > 650 ? null : 'button'"
+          :aria-expanded="windowSize > 650 ? null : collapse.split(',')[pm] == 'false' || 'false'" 
          >
           <div class="title-row">
-            <div class="prompt-text">
+            <legend class="prompt-text" :id="`${eldata.name}-label-${pm + 1}`">
               {{ prompt.prompt || prompt }}
-            </div>
+            </legend>
               <span>
                 <HelpText :text="prompt.help" :name="eldata.name"/>
               </span>
@@ -55,19 +56,19 @@
             class="option-row"
             v-on:click="selectOption(pm, prompt.name || pm, (option.value || (oi + 1)))"
             v-on:mouseup="closeExpand(pm)"
-            v-on:touchend="closeExpand(pm)"
           >
             <input
               type="radio"
               :name="`${eldata.name}-option-${pm + 1}`"
               :id="`${eldata.name}-option-${pm + 1}-${oi + 1}`"
+              :aria-label="`${prompt.prompt || prompt}, ${option.text || option}`"
               :value="option.value || (oi + 1)"
               :checked="selectedOptions[prompt.name || pm] == (option.value || (oi + 1))"
             />
+            <label class="likert-labels" :id="`label-${eldata.name}-option-${pm + 1}-${oi + 1}`" :for="`${eldata.name}-option-${pm + 1}-${oi + 1}`">{{ option.text || option }}</label>
             <div class="checkmark">
               <div class="checked"></div>
             </div>
-            <label class="likert-labels" :for="`${eldata.name}-option-${pm + 1}-${oi + 1}`">{{ option.text || option }}</label>
           </div>
         </div>
       </div>
@@ -79,9 +80,15 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "LikertTable",
+  inject: ["getWindowSize"],
   props: ["eldata", "value"],
   components: {
     HelpText
+  },
+  computed: {
+    windowSize() {
+      return this.getWindowSize()
+    }
   },
   data() {
     return {
@@ -115,6 +122,7 @@ export default {
       console.log(this.collapse)
     },
     closeExpand(row) {
+      // return
       console.log('closing')
       var collapse = this.collapse.split(',')
       collapse[row] = true
@@ -187,6 +195,13 @@ a {
     font-size: 0.9rem;
   }
 
+  fieldset {
+    border: 0;
+    padding: 0.01em 0 0 0;
+    margin: 0;
+    min-width: 0;
+  }
+
   .table {
     margin-top: 1rem;
     margin-bottom: 1rem;
@@ -254,7 +269,7 @@ a {
         top: 0.75em;
       }
 
-      input[type='radio']:focus + .checkmark, input[type='radio']:active + .checkmark {
+      input[type='radio']:focus ~ .checkmark, input[type='radio']:active ~ .checkmark {
         // box-shadow: 0 0 0 2px #f90;
         outline: 2px solid #f90;
         // outline-offset: 1px;

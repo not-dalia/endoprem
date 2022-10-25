@@ -270,7 +270,7 @@ let formData = {
           {text:"Strongly disagree", value: 5} 
         ],
         prompts: [
-          {prompt: "I was happy with the way I was referred for the test", name: "B1R"},
+          {prompt: "I was happy with the way I was referred for the test", name: "B1R", help: "What's up?"},
           {prompt: "The time from first being referred to having the test done was satisfactory", name: "B2R"},
           {prompt: "I felt able to change the appointment if it didn’t suit me", name: "B3R"}
         ],

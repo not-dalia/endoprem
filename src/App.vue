@@ -7,9 +7,31 @@
 <script>
 import { uuid } from 'vue-uuid';
 export default {
-  mounted() {
+  data () {
+    return {
+      windowSize: 0,
+    }
+  },
+  provide () {
+    return {
+      getWindowSize: () => this.windowSize
+    }
+  },
+  mounted () {
     if (!this.$cookies.isKey('endoprem_si')) {
-      $cookies.set('endoprem_si', uuid.v4());
+      this.$cookies.set('endoprem_si', uuid.v4());
+    }
+    this.handleWindowSizeChange()
+    window.addEventListener("resize", this.handleWindowSizeChange);
+  },
+  beforeDestroy () {
+    window.removeEventListener("resize", this.handleWindowSizeChange);
+  },
+  methods: {
+    handleWindowSizeChange () {
+      this.windowSize = window.innerWidth
+|| document.documentElement.clientWidth
+|| document.body.clientWidth;
     }
   }
 }
@@ -49,11 +71,17 @@ body {
 }
 
 .title-row {
-    font-size: 1.1rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
+  font-size: 1.1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+
+div:focus, input:focus {
+  outline: 2px solid #f90;
+  outline-offset: 2px;
+}
 
 @media only screen and (max-width: 600px)  {
   body {

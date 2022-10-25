@@ -1,5 +1,5 @@
 <template>
-  <div :class="`help-text ${isOpen? 'open-help-text' : ''}`" v-on:click.stop @focus="handleFocus"
+  <div :class="`help-text ${isOpen? 'open-help-text' : ''}`" v-on:click.stop.prevent="handleFocus" v-on:keypress.prevent v-on:keyup.space.enter.stop="handleFocus" role="button"
         @focusout="handleFocusOut"
         tabindex="0" v-show="text">
     <div class="question-mark-help-text">?</div>
@@ -23,6 +23,7 @@ export default {
       if (this.isOpen) epLogger(this.$cookies.get('endoprem_si'), {question: this.name}, 'help_hint')
     },
     handleFocus() {
+      console.log('toggling ' + this.isOpen)
       this.isOpen = !this.isOpen;
       if (this.isOpen) epLogger(this.$cookies.get('endoprem_si'), {question: this.name}, 'help_hint')
     },
