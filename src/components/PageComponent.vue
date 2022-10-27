@@ -82,13 +82,13 @@ export default {
         this.populateValidationObject();
       }
     },
-    isNextRequested: function (val, oldVal) {
+    isNextRequested: function (val) {
       if (val && Object.keys(this.elementsValidation).length == 0)
         this.progressToNext(true);
     },
     // elementsValidation: {
     validationCount: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         if (val >= Object.keys(this.elementsValidation).length) {
           let isDataValid = true;
           Object.keys(this.elementsValidation).forEach((key) => {
@@ -110,14 +110,8 @@ export default {
       deep: true,
     },
     defaultValues: {
-      handler: function (val, oldVal) {
+      handler: function () {
         this.$emit("input", this.defaultValues);
-      },
-      deep: true,
-    },
-    value: {
-      handler: function (val, oldVal) {
-        // console.log('result changed to: ' + val)
       },
       deep: true,
     },

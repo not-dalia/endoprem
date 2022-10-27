@@ -77,7 +77,7 @@ export default {
     };
   },
   watch: {
-    selectedOption: function (val, oldVal) {
+    selectedOption: function (val) {
       this.$emit('input', this.options[val]);
     }
   },

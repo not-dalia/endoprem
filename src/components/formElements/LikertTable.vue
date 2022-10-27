@@ -125,7 +125,7 @@ export default {
   },
   watch: {
     selectedOptions: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.$emit("input", val);
         // this.$emit("input", Object.keys(val).map(e => this.eldata.options[val[e] -1]&&this.eldata.options[val[e] -1].value || val[e]));
       },

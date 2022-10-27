@@ -82,13 +82,13 @@ export default {
   }, 
   watch: {
     selectedDate: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.$emit('input', val);
       },
       deep: true
     }, 
     value: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         if (!val) return;
         this.selectedDate.day = val.day;
         this.selectedDate.month = val.month;

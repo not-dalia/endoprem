@@ -77,7 +77,7 @@
 
 <script>
 import epLogger from "@/logger.js"
-import { object, string, date, number, array, boolean } from "yup";
+import { object, string, number, array, boolean } from "yup";
 import {
   FormSeparator,
   TextField,
@@ -120,13 +120,13 @@ export default {
   },
   watch: {
     elementValue: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.$emit("input", val);
       },
       deep: true,
     },
     value: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.elementValue = val;
       },
       deep: true,
@@ -156,7 +156,7 @@ export default {
       o[this.formel.name] = this.elementValue
       try {
         if (this.formel.type != 'section') {
-          let v = await this.validationSchema.validate(this.elementValue)
+          await this.validationSchema.validate(this.elementValue)
           this.isValid(true)
           this.error = ""
         } 
@@ -195,7 +195,7 @@ export default {
       let elementType = this.formel.type;
       let validationSchema = {};
       switch (elementType) {
-        case "studyid":
+        case "studyid": {
           let code1 = string().length(2, 'Invalid study ID.')
           let code2 = string().length(6, 'Invalid study ID.')
           let code3 = string().length(9, 'Invalid study ID.')
@@ -210,6 +210,7 @@ export default {
               code3
             })
           break;
+        }
         case "date":
             validationSchema = object({
               day: number().transform(value => (isNaN(value) ? undefined : value)).min(1).max(31),

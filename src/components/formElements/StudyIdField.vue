@@ -32,7 +32,6 @@
           placeholder="XX"
           :name="`${eldata.name}-code1`"
           style="width: 2em;"
-          @input="($event) => onCodeInput($event, 'code1')"
         >
       </div>
       <div class="date-col">
@@ -46,7 +45,6 @@
           maxlength="6"
           :name="`${eldata.name}-code2`"
           style="width: 6em;"
-          @input="($event) => onCodeInput($event, 'code2')"
         >
       </div>
       <div class="date-col">
@@ -60,7 +58,6 @@
           maxlength="9"
           :name="`${eldata.name}-code3`"
           style="width: 9rem;"
-          @input="($event) => onCodeInput($event, 'code3')"
         >
       </div>
     </div>
@@ -87,13 +84,13 @@ export default {
   }, 
   watch: {
     selectedDate: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.$emit('input', val);
       },
       deep: true
     }, 
     value: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         if (!val) return;
         this.selectedDate.day = val.day;
         this.selectedDate.month = val.month;
@@ -105,17 +102,6 @@ export default {
   mounted() {
   },
   methods: {
-    onCodeInput ($event, codeNum) {
-      let element = $event.target
-      var maxLen = element.maxLength;
-      var currentLen = element.value.length;
-
-      // if (maxLen <= currentLen && codeNum !== 'code3')
-      // {
-      // this.selectedDate[codeNum] = this.selectedDate[codeNum] && this.selectedDate[codeNum].substr(0, maxLen)
-        // this.focusNext(element)
-      // }
-    },
     focusNext(el) {
       const currentIndex = Array.from(el.form.elements).indexOf(el);
       el.form.elements.item(

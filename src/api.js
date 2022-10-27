@@ -4,7 +4,7 @@ const HOST = process.env.VUE_APP_HOST
 
 function postInteraction(logItem) {
   axios.post(`${HOST}/interaction`, logItem)
-    .then(function (response) {
+    .then(function () {
       // console.log(response);
     })
     .catch(function (error) {

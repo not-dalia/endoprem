@@ -130,7 +130,7 @@ export default {
   },
   watch: {
     audioData: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         console.log('audioData changed')
         this.$emit("input", {
           text: this.textval,
@@ -141,7 +141,7 @@ export default {
       deep: true
     },
     textval: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.$emit("input", {
           text: val,
           audio: this.audioData,
@@ -158,7 +158,7 @@ export default {
       this.onRecordingResult(blob);
     }
   },
-  beforeDestroy (to, from, next) {
+  beforeDestroy () {
     this.$refs[`audio_${this.eldata.name}`] && this.$refs[`audio_${this.eldata.name}`].stop();
     if(this.timer)
         clearInterval(this.timer);

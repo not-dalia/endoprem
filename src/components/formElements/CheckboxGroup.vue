@@ -77,7 +77,7 @@ export default {
       if (!this.actionOption) return;
       let option = this.eldata.options[this.actionOption-1]
       let action = {
-        show: (option.action.onchecked && this.selectedOptions.indexOf(getOptionValue(this.actionOption-1)) > -1 ) || (!option.action.onchecked && this.selectedOptions.indexOf(getOptionValue(this.actionOption-1)) < 0 ),
+        show: (option.action.onchecked && this.selectedOptions.indexOf(this.getOptionValue(this.actionOption-1)) > -1 ) || (!option.action.onchecked && this.selectedOptions.indexOf(this.getOptionValue(this.actionOption-1)) < 0 ),
         element: option.action.name
       }
       this.$root.$emit('toggleElement', action);
@@ -85,11 +85,11 @@ export default {
     getOptionValue(index) {
       return this.eldata.options[index].value || this.eldata.options[index].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase();
     },
-    checkboxChanged (val, oldVal) {
+    checkboxChanged () {
       if (!this.actionOption) return;
       let option = this.eldata.options[this.actionOption-1]
       let action = {
-        show: (option.action.onchecked && this.selectedOptions.indexOf(getOptionValue(this.actionOption-1)) > -1 ) || (!option.action.onchecked && this.selectedOptions.indexOf(getOptionValue(this.actionOption-1)) < 0 ),
+        show: (option.action.onchecked && this.selectedOptions.indexOf(this.getOptionValue(this.actionOption-1)) > -1 ) || (!option.action.onchecked && this.selectedOptions.indexOf(this.getOptionValue(this.actionOption-1)) < 0 ),
         element: option.action.name
       }
       this.$root.$emit('toggleElement', action);

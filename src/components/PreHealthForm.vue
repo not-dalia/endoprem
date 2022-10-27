@@ -5,7 +5,6 @@
       ref="phform"
       name="pre-health"
     >
-      <!-- <div class="page-num">Page {{currentPage + 1}} of {{formData.length}}</div> -->
       <ProgressBar
         :progress="(currentQuestion / formData[currentPage].length) * 100"
         :total-pages="formData.length - 1"
@@ -133,7 +132,7 @@
 import PageComponent from "@/components/PageComponent.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
 import FormData from "@/data/";
-import { postSurvey, getDownload } from "@/api.js";
+import { /*postSurvey,*/ getDownload } from "@/api.js";
 
 export default {
   name: "PreHealthForm",
@@ -161,7 +160,7 @@ export default {
   },
   watch: {
     results: {
-      handler: function (val, oldVal) {
+      handler: function () {
         this.saveForm();
       },
       deep: true,

@@ -58,12 +58,12 @@ export default {
   },
   watch: {
     result: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.$emit("input", val);
       },
       deep: true,
     },
-    validationCount: function (val, oldVal) {
+    validationCount: function (val) {
         if (val >= Object.keys(this.elementsValidation).length) {
           let isDataValid = true;
           Object.keys(this.elementsValidation).forEach((key) => {
