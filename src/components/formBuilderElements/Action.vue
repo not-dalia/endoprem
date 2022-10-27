@@ -1,20 +1,46 @@
 <template>
   <div>
-    <builderInputRow label="Action type" name="action-type">
+    <builderInputRow
+      label="Action type"
+      name="action-type"
+    >
       <select v-model="actionType">
-        <option value="none">No Action</option>
-        <option value="end-survey">End Survey</option>
-        <option value="toggle-section">Toggle Section</option>
+        <option value="none">
+          No Action
+        </option>
+        <option value="end-survey">
+          End Survey
+        </option>
+        <option value="toggle-section">
+          Toggle Section
+        </option>
       </select>
     </builderInputRow>
-    <builderInputRow label="Trigger action when option is" name="action-trigger" v-if="actionType != 'none'">
+    <builderInputRow
+      v-if="actionType != 'none'"
+      label="Trigger action when option is"
+      name="action-trigger"
+    >
       <select v-model="option.action.onchecked">
-        <option :value="false">Not selected</option>
-        <option :value="true">Selected</option>
+        <option :value="false">
+          Not selected
+        </option>
+        <option :value="true">
+          Selected
+        </option>
       </select>
     </builderInputRow>
-    <builderInputRow label="Sub-section ID" name="subsection-id" v-if="actionType == 'toggle-section'">
-      <input name="subsection-id" type="text" v-model="option.action.name" style="width: 100%"/>
+    <builderInputRow
+      v-if="actionType == 'toggle-section'"
+      label="Sub-section ID"
+      name="subsection-id"
+    >
+      <input
+        v-model="option.action.name"
+        name="subsection-id"
+        type="text"
+        style="width: 100%"
+      >
     </builderInputRow>
   </div>
 </template>
@@ -22,9 +48,14 @@
 import builderInputRow from "@/components/formBuilderElements/InputRow.vue";
 export default {
   name: 'DateQuestion',
-  props: ['option'],
   components: {
     builderInputRow
+  },
+  props: ['option'],
+  data () {
+    return {
+      actionType: 'none'
+    }
   },
   watch: {
     actionType (val, oldVal) {
@@ -36,11 +67,6 @@ export default {
   },
   mounted () {
     if (this.option.action.type) this.actionType = this.option.action.type
-  },
-  data () {
-    return {
-      actionType: 'none'
-    }
   }
 }
 </script>

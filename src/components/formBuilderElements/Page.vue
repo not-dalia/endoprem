@@ -1,44 +1,96 @@
 <template>
   <div class="builder-page">
     <div class="order-control-container">
-      <div class="order-control" @click="moveUp">🠭</div>
-      <div class="order-control" @click="moveDown">🠯</div>
+      <div
+        class="order-control"
+        @click="moveUp"
+      >
+        🠭
+      </div>
+      <div
+        class="order-control"
+        @click="moveDown"
+      >
+        🠯
+      </div>
     </div>
     <div class="page-container">
       <div class="page-title">
-        <span class="fold-control" @click="toggleFold">{{ isFolded ? '[+]' : '[–]'}}</span><span :style="{ color }">Page {{pageNumber + 1}}</span><span v-if="isFolded"><span v-if="page.questions" class="question-counts">({{ page.questions.length}} question{{ page.questions.length > 1 ? 's' : ''}})</span><span v-else class="question-counts">(no questions)</span></span>
+        <span
+          class="fold-control"
+          @click="toggleFold"
+        >{{ isFolded ? '[+]' : '[–]' }}</span><span :style="{ color }">Page {{ pageNumber + 1 }}</span><span v-if="isFolded"><span
+          v-if="page.questions"
+          class="question-counts"
+        >({{ page.questions.length }} question{{ page.questions.length > 1 ? 's' : '' }})</span><span
+          v-else
+          class="question-counts"
+        >(no questions)</span></span>
       </div>
-      <div class="folded-section" v-if="isFolded">
+      <div
+        v-if="isFolded"
+        class="folded-section"
+      >
         <div class="first-page-title">
           {{ pageTitle }}
         </div>
-        <div class="dots-decoration" @click="toggleFold">
+        <div
+          class="dots-decoration"
+          @click="toggleFold"
+        >
           ●●●
         </div>
       </div>
-      <div class="page-details" v-else>
+      <div
+        v-else
+        class="page-details"
+      >
         <settingsContainer title="Page details">
-          <builderInputRow label="Page title" name="page-title">
-            <input type="text" name="page-title" v-model="pageTitle" style="width: 100%" />
+          <builderInputRow
+            label="Page title"
+            name="page-title"
+          >
+            <input
+              v-model="pageTitle"
+              type="text"
+              name="page-title"
+              style="width: 100%"
+            >
           </builderInputRow>
-          <builderInputRow label="Page description" name="page-description">
-            <textarea name="page-description" v-model="pageDescription" style="width: 100%" />
+          <builderInputRow
+            label="Page description"
+            name="page-description"
+          >
+            <textarea
+              v-model="pageDescription"
+              name="page-description"
+              style="width: 100%"
+            />
           </builderInputRow>
         </settingsContainer>
 
         <settingsContainer title="Questions">
-          <div class="section-folding-control" v-if="page.questions">
-            <a @click="expandAllQuestions" class="fold-button">[+] Expand All</a>
+          <div
+            v-if="page.questions"
+            class="section-folding-control"
+          >
+            <a
+              class="fold-button"
+              @click="expandAllQuestions"
+            >[+] Expand All</a>
             <span>|</span>
-            <a @click="foldAllQuestions" class="fold-button">[–] Fold All</a>
+            <a
+              class="fold-button"
+              @click="foldAllQuestions"
+            >[–] Fold All</a>
           </div>
           <builderQuestion 
             v-for="(question, i) in page.questions" 
-            v-bind:key="`builder-question-${i}`" 
+            :key="`builder-question-${i}`" 
             :question="question" 
             :question-number="i + 1" 
             :color="color" 
-            :isFolded="questionFolds[i]"
+            :is-folded="questionFolds[i]"
             @toggleFold="() => toggleQuestionFold(i)"
             @moveUp="() => moveQuestionUp(i)"
             @moveDown="() => moveQuestionDown(i)"
@@ -55,18 +107,28 @@ import builderInputRow from "@/components/formBuilderElements/InputRow.vue";
 import builderQuestion from "@/components/formBuilderElements/Question.vue";
 
 export default {
-  name: 'builderPage',
-  props: ['page', 'color', 'pageNumber', 'isFolded'],
+  name: 'BuilderPage',
   components: {
     settingsContainer,
     builderInputRow,
     builderQuestion
   },
+  props: ['page', 'color', 'pageNumber', 'isFolded'],
   data () {
     return {
       pageTitle: null,
       pageDescription: null,
       questionFolds: []
+    }
+  },
+  watch: {
+    page: {
+      deep: true,
+      handler (val) {
+        if (!val) return;
+        this.pageTitle = val.title;
+        this.pageDescription = val.description;
+      }
     }
   },
   mounted () {
@@ -107,16 +169,6 @@ export default {
       this.page.questions.splice(i + 1, 0, this.page.questions.splice(i, 1)[0]);
       questionFolds.splice(i + 1, 0, questionFolds.splice(i, 1)[0]);
       this.questionFolds = questionFolds;
-    }
-  },
-  watch: {
-    page: {
-      deep: true,
-      handler (val) {
-        if (!val) return;
-        this.pageTitle = val.title;
-        this.pageDescription = val.description;
-      }
     }
   }
 }

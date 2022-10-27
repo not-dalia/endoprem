@@ -1,20 +1,20 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
 import { uuid } from 'vue-uuid';
 export default {
-  data () {
-    return {
-      windowSize: 0,
-    }
-  },
   provide () {
     return {
       getWindowSize: () => this.windowSize
+    }
+  },
+  data () {
+    return {
+      windowSize: 0,
     }
   },
   mounted () {

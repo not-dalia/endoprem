@@ -1,36 +1,57 @@
 <template>
-  <div class="radio-group" :class="{subsection: eldata.subsection }" :id="`form-el-${eldata.name}`" v-bind:value="value">
+  <div
+    :id="`form-el-${eldata.name}`"
+    class="radio-group"
+    :class="{subsection: eldata.subsection }"
+    :value="value"
+  >
     <div class="title-row">
       <label class="title">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
-      <HelpText :text="eldata.help" :name="eldata.name"/>
+      <HelpText
+        :text="eldata.help"
+        :name="eldata.name"
+      />
     </div>
 
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
-    <div class="option-row" :class="{ col: getLength() > 10 }">
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
+    <div
+      class="option-row"
+      :class="{ col: getLength() > 10 }"
+    >
       <div
-        class="option-col"
-        
         v-for="(option, oi) in eldata.options"
-        v-bind:key="`${eldata.name}-option-${oi+1}`"
-        v-on:click="() => {
+        
+        :key="`${eldata.name}-option-${oi+1}`"
+        class="option-col"
+        @click="() => {
           selectOption(eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())
           focus(`#${eldata.name}-option-${oi+1}`)
         }"
       >
         <div class="option-label">
           <input
-          type="radio"
-          :name="`${eldata.name}-option`"
-          :id="`${eldata.name}-option-${oi+1}`"
-          :value="eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()"
-          :checked="selectedOption === (eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())"
-          />
+            :id="`${eldata.name}-option-${oi+1}`"
+            type="radio"
+            :name="`${eldata.name}-option`"
+            :value="eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase()"
+            :checked="selectedOption === (eldata.options[oi].value || eldata.options[oi].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase())"
+          >
           <div class="checkmark">
-            <div class="checked"></div>
+            <div class="checked" />
           </div>
-          <label :for="`${eldata.name}-option-${oi+1}`">{{option.text}}</label>
+          <label :for="`${eldata.name}-option-${oi+1}`">{{ option.text }}</label>
         </div> 
-        <div class="label-desc" v-if="option.description"> {{option.description}} </div>
+        <div
+          v-if="option.description"
+          class="label-desc"
+        >
+          {{ option.description }}
+        </div>
       </div>
     </div>
   </div>
@@ -40,10 +61,10 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "RadioGroup",
-  props: ["eldata", "value"],
   components: {
     HelpText
   },
+  props: ["eldata", "value"],
   data() {
     return {
       today: new Date(),
@@ -51,6 +72,12 @@ export default {
       actionOption: null,
       endSurvey: false
     };
+  },
+  watch: {
+    selectedOption: function (val, oldVal) {
+      this.$emit('input', val);
+      this.radioChanged(val, oldVal);
+    }
   },
   mounted() {
     
@@ -60,12 +87,6 @@ export default {
     });
     if (this.value != null) this.selectedOption = this.value
     this.initialize()
-  },
-  watch: {
-    selectedOption: function (val, oldVal) {
-      this.$emit('input', val);
-      this.radioChanged(val, oldVal);
-    }
   },
   methods: {
     focus (elementId) {

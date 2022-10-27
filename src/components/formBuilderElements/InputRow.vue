@@ -1,15 +1,15 @@
 <template>
   <div class="builder-input-row">
-    <label :for="name">{{label}}</label>
+    <label :for="name">{{ label }}</label>
     <div class="slot-row">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'builderInputRow',
+  name: 'BuilderInputRow',
   props: ['label', 'name', "color"]
 }
 </script>

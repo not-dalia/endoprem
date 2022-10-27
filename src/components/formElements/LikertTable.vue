@@ -1,73 +1,98 @@
 <template>
   <div
+    :id="`form-el-${eldata.name}`"
     class="likert-group"
     :class="{ subsection: eldata.subsection }"
-    :id="`form-el-${eldata.name}`"
-    v-bind:value="value"
+    :value="value"
   >
-    <label class="title" v-if="eldata.question || (eldata.validationRules && eldata.validationRules.required)">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
+    <label
+      v-if="eldata.question || (eldata.validationRules && eldata.validationRules.required)"
+      class="title"
+    >{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
     <div class="table">
-      <div class="table-row radio-group-labels" aria-hidden="true">
-        <div class="table-cell empty-cell"></div>
+      <div
+        class="table-row radio-group-labels"
+        aria-hidden="true"
+      >
+        <div class="table-cell empty-cell" />
         <div
-          class="table-cell radio-group-label"
           v-for="(option, oi) in eldata.options"
-          v-bind:key="`${eldata.name}-label-${oi + 1}`"
+          :key="`${eldata.name}-label-${oi + 1}`"
+          class="table-cell radio-group-label"
         >
           {{ option.text || option }}
         </div>
       </div>
       <div
-        :class="{collapse: collapse.split(',')[pm] == 'true', 'table-row': true, 'radio-group-data': true}"
         v-for="(prompt, pm) in eldata.prompts"
-        v-bind:key="`${eldata.name}-row-${pm + 1}`"
+        :key="`${eldata.name}-row-${pm + 1}`"
+        :class="{collapse: collapse.split(',')[pm] == 'true', 'table-row': true, 'radio-group-data': true}"
         role="radiogroup"
       >
-        <div class="table-cell prompt"
-          v-on:click="collapse.split(',')[pm] && toggleExpand(pm)"
-          v-on:keyup.enter.space.prevent="collapse.split(',')[pm] && toggleExpand(pm)"
-          v-on:keypress.enter.space.prevent
+        <div
+          class="table-cell prompt"
           :tabindex="windowSize > 650 ? null : 0"
           :role="windowSize > 650 ? null : 'button'"
-          :aria-expanded="windowSize > 650 ? null : collapse.split(',')[pm] == 'false' || 'false'" 
-         >
+          :aria-expanded="windowSize > 650 ? null : collapse.split(',')[pm] == 'false' || 'false'"
+          @click="collapse.split(',')[pm] && toggleExpand(pm)"
+          @keyup.enter.space.prevent="collapse.split(',')[pm] && toggleExpand(pm)"
+          @keypress.enter.space.prevent 
+        >
           <div class="title-row">
-            <legend class="prompt-text" :id="`${eldata.name}-label-${pm + 1}`">
+            <legend
+              :id="`${eldata.name}-label-${pm + 1}`"
+              class="prompt-text"
+            >
               {{ prompt.prompt || prompt }}
             </legend>
-              <span>
-                <HelpText :text="prompt.help" :name="eldata.name"/>
-              </span>
+            <span>
+              <HelpText
+                :text="prompt.help"
+                :name="eldata.name"
+              />
+            </span>
           </div>
           <div class="prompt-collapse">
-            <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[pm] == 'false', 'fa-chevron-down': collapse.split(',')[pm] == 'true'}"></i>
+            <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[pm] == 'false', 'fa-chevron-down': collapse.split(',')[pm] == 'true'}" />
           </div>
         </div>
-        <div class="selected-label" v-if="selectedOptions[prompt.name || pm]">
-          {{ eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm]))&&eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm])).text || eldata.options[selectedOptions[prompt.name || pm]-1]  }}
+        <div
+          v-if="selectedOptions[prompt.name || pm]"
+          class="selected-label"
+        >
+          {{ eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm]))&&eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm])).text || eldata.options[selectedOptions[prompt.name || pm]-1] }}
         </div>
         <div
-          class="table-cell radio-group-cell option-cell"
           v-for="(option, oi) in eldata.options"
-          v-bind:key="`${eldata.name}-cell-${pm + 1}-${oi + 1}`"
+          :key="`${eldata.name}-cell-${pm + 1}-${oi + 1}`"
+          class="table-cell radio-group-cell option-cell"
         >
           <div
             class="option-row"
-            v-on:click="selectOption(pm, prompt.name || pm, (option.value || (oi + 1)))"
-            v-on:mouseup="closeExpand(pm)"
+            @click="selectOption(pm, prompt.name || pm, (option.value || (oi + 1)))"
+            @mouseup="closeExpand(pm)"
           >
             <input
+              :id="`${eldata.name}-option-${pm + 1}-${oi + 1}`"
               type="radio"
               :name="`${eldata.name}-option-${pm + 1}`"
-              :id="`${eldata.name}-option-${pm + 1}-${oi + 1}`"
               :aria-label="`${prompt.prompt || prompt}, ${option.text || option}`"
               :value="option.value || (oi + 1)"
               :checked="selectedOptions[prompt.name || pm] == (option.value || (oi + 1))"
-            />
-            <label class="likert-labels" :id="`label-${eldata.name}-option-${pm + 1}-${oi + 1}`" :for="`${eldata.name}-option-${pm + 1}-${oi + 1}`">{{ option.text || option }}</label>
+            >
+            <label
+              :id="`label-${eldata.name}-option-${pm + 1}-${oi + 1}`"
+              class="likert-labels"
+              :for="`${eldata.name}-option-${pm + 1}-${oi + 1}`"
+            >{{ option.text || option }}</label>
             <div class="checkmark">
-              <div class="checked"></div>
+              <div class="checked" />
             </div>
           </div>
         </div>
@@ -80,16 +105,11 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "LikertTable",
-  inject: ["getWindowSize"],
-  props: ["eldata", "value"],
   components: {
     HelpText
   },
-  computed: {
-    windowSize() {
-      return this.getWindowSize()
-    }
-  },
+  inject: ["getWindowSize"],
+  props: ["eldata", "value"],
   data() {
     return {
       today: new Date(),
@@ -98,12 +118,10 @@ export default {
       lastChange: 0
     };
   },
-  mounted() {
-    if (this.value != null) this.selectedOptions = this.value;
-    else this.selectedOptions = {}
-    var collapse = []
-    this.eldata.prompts.forEach(() => collapse.push(false))
-    this.collapse = collapse.join(',')
+  computed: {
+    windowSize() {
+      return this.getWindowSize()
+    }
   },
   watch: {
     selectedOptions: {
@@ -113,6 +131,13 @@ export default {
       },
       deep: true
     },
+  },
+  mounted() {
+    if (this.value != null) this.selectedOptions = this.value;
+    else this.selectedOptions = {}
+    var collapse = []
+    this.eldata.prompts.forEach(() => collapse.push(false))
+    this.collapse = collapse.join(',')
   },
   methods: {
     toggleExpand(row) {

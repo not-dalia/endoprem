@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+import HomePage from './views/HomePage.vue'
 import FormBuilder from './views/FormBuilder.vue'
 import PrivacyPolicy from './views/PrivacyPolicy.vue'
-import Placeholder from './views/Placeholder.vue'
+// import PlaceholderPage from './views/PlaceholderPage.vue'
 
 Vue.use(Router)
 
@@ -12,7 +12,7 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: HomePage
     },
     {
       path: '/form-builder',

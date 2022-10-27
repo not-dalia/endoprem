@@ -1,15 +1,37 @@
 <template>
-  <div class="text-field" :class="{subsection: eldata.subsection }"  :id="`form-el-${eldata.name}`">
+  <div
+    :id="`form-el-${eldata.name}`"
+    class="text-field"
+    :class="{subsection: eldata.subsection }"
+  >
     <div class="title-row">
-      <label :for="eldata.name" class="title">
+      <label
+        :for="eldata.name"
+        class="title"
+      >
         <span>{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</span>
       
       </label>
-      <HelpText :text="eldata.help" :name="eldata.name"/>
+      <HelpText
+        :text="eldata.help"
+        :name="eldata.name"
+      />
     </div>
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
     <div class="input-container">
-      <input type="number" :name="eldata.name" :id="eldata.name" v-bind:value="value" v-on:input="$emit('input', $event.target.value)" min="0"/>
+      <input
+        :id="eldata.name"
+        type="number"
+        :name="eldata.name"
+        :value="value"
+        min="0"
+        @input="$emit('input', $event.target.value)"
+      >
     </div>
   </div>
 </template>
@@ -18,10 +40,10 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "TextField",
-  props: ["eldata", "value"],
   components: {
     HelpText
   },
+  props: ["eldata", "value"],
   data() {
     return {};
   },

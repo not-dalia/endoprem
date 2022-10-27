@@ -1,14 +1,18 @@
 <template>
   <div id="home">
     <div class="test-banner">
-      <div class="test-banner-text">This is a test version of ENDOPREM</div>
+      <div class="test-banner-text">
+        This is a test version of ENDOPREM
+      </div>
     </div>
     <PreHealthForm />
     <footer>
       <div class="footer-content">
         <div>What goes in a footer?</div>
         <div>
-          <router-link to="/privacy">Privacy Policy</router-link>
+          <router-link to="/privacy">
+            Privacy Policy
+          </router-link>
         </div>
       </div>
     </footer>
@@ -19,7 +23,7 @@
 import PreHealthForm from '../components/PreHealthForm.vue'
 
 export default {
-  name: 'home',
+  name: 'HomePage',
   components: {
     PreHealthForm
   }

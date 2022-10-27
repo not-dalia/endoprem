@@ -1,117 +1,121 @@
 <template>
   <div class="ph-form">
-    <form ref="phform" name="pre-health" id="ph-form">
+    <form
+      id="ph-form"
+      ref="phform"
+      name="pre-health"
+    >
       <!-- <div class="page-num">Page {{currentPage + 1}} of {{formData.length}}</div> -->
       <ProgressBar
         :progress="(currentQuestion / formData[currentPage].length) * 100"
-        :totalPages="formData.length - 1"
+        :total-pages="formData.length - 1"
         :page="currentPage"
       />
-      <Page
+      <PageComponent
         :id="`page-${currentPage}`"
-        :page="formData[currentPage]"
+        :key="currentPage"
         v-model="results"
-        v-bind:key="currentPage"
-        :currentPage="currentPage"
+        :page="formData[currentPage]"
+        :current-page="currentPage"
         :current-question="currentQuestion"
-        :progressToNext="progressToNext"
+        :progress-to-next="progressToNext"
       />
       <div class="footer">
         <div
+          v-show="!(currentPage > 0 || currentQuestion > 0) && hasSavedResults"
           class="footer-nav"
           style="margin-bottom: 10px; justify-content: flex-end;"
-          v-show="!(currentPage > 0 || currentQuestion > 0) && hasSavedResults"
         >
           <div class="btn-container">
             <button
+              v-if="!(currentPage > 0 || currentQuestion > 0)"
               id="clear-btn"
               ref="clearbtn"
-              v-on:click="startFromSave()"
               type="button"
               tabindex="0"
-              v-if="!(currentPage > 0 || currentQuestion > 0)"
+              @click="startFromSave()"
             >
               <span style="margin-right: 10px;">Continue saved survey</span>
-              <i class="fas fa-caret-right"></i>
+              <i class="fas fa-caret-right" />
             </button>
           </div>
         </div>
         <div class="footer-nav">
           <div class="btn-container prev">
             <button
+              v-if="(currentPage > 0 || currentQuestion > 0) && !isSubmitted"
               id="prev-btn"
               ref="prevbtn"
-              v-if="(currentPage > 0 || currentQuestion > 0) && !isSubmitted"
-              v-on:click="prevPage()"
               type="button"
               tabindex="0"
+              @click="prevPage()"
             >
-              <i class="fas fa-caret-left"></i>
+              <i class="fas fa-caret-left" />
               <span style="margin-left: 10px">Back</span>
             </button>
           </div>
-                    <div class="btn-container next">
+          <div class="btn-container next">
             <button
-              id="next-btn"
-              ref="nextbtn"
               v-if="
                 (currentPage > 0 || currentQuestion > 0) &&
-                (currentPage < formData.length - 1 ||
-                  currentQuestion < formData[currentPage].length - 1)
+                  (currentPage < formData.length - 1 ||
+                    currentQuestion < formData[currentPage].length - 1)
               "
-              v-on:click="nextPage()"
+              id="next-btn"
+              ref="nextbtn"
               tabindex="0"
               type="button"
               :disabled="!enableNext"
+              @click="nextPage()"
             >
               <span style="margin-right: 10px">Next</span>
-              <i class="fas fa-caret-right"></i>
+              <i class="fas fa-caret-right" />
             </button>
 
             <button
+              v-if="!(currentPage > 0 || currentQuestion > 0)"
               id="next-btn"
               ref="nextbtn"
-              v-if="!(currentPage > 0 || currentQuestion > 0)"
-              v-on:click="startNew()"
               type="button"
               :disabled="!enableNext"
+              @click="startNew()"
             >
               <span style="margin-right: 10px">Start new survey</span>
-              <i class="fas fa-caret-right"></i>
+              <i class="fas fa-caret-right" />
             </button>
 
             <button
-              id="submit-btn"
-              ref="submitbtn"
               v-if="
                 (currentPage > 0 || currentQuestion > 0) &&
-                !(
-                  currentPage < formData.length - 1 ||
-                  currentQuestion < formData[currentPage].length - 1
-                ) &&
-                isSubmitted &&
-                submissionId
+                  !(
+                    currentPage < formData.length - 1 ||
+                    currentQuestion < formData[currentPage].length - 1
+                  ) &&
+                  isSubmitted &&
+                  submissionId
               "
-              v-on:click="downloadCSV()"
+              id="submit-btn"
+              ref="submitbtn"
               type="button"
               :style="{ marginRight: '10px' }"
+              @click="downloadCSV()"
             >
               <span>Download CSV</span>
             </button>
 
             <button
-              id="submit-btn"
-              ref="submitbtn"
               v-if="
                 (currentPage > 0 || currentQuestion > 0) &&
-                !(
-                  currentPage < formData.length - 1 ||
-                  currentQuestion < formData[currentPage].length - 1
-                )
+                  !(
+                    currentPage < formData.length - 1 ||
+                    currentQuestion < formData[currentPage].length - 1
+                  )
               "
-              v-on:click="submit()"
+              id="submit-btn"
+              ref="submitbtn"
               type="button"
               :disabled="!enableNext || isSubmitted"
+              @click="submit()"
             >
               <span>{{ isSubmitted ? "Thanks!" : "Submit Answers" }}</span>
             </button>
@@ -126,7 +130,7 @@
 </template>
 
 <script>
-import Page from "@/components/Page.vue";
+import PageComponent from "@/components/PageComponent.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
 import FormData from "@/data/";
 import { postSurvey, getDownload } from "@/api.js";
@@ -134,7 +138,7 @@ import { postSurvey, getDownload } from "@/api.js";
 export default {
   name: "PreHealthForm",
   components: {
-    Page,
+    PageComponent,
     ProgressBar,
   },
   data() {

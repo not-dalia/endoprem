@@ -1,12 +1,16 @@
 <template>
-  <div class="settings-container" :data-title="title" :style="{borderWidth: borderWidth || 1}">
-    <slot></slot>
+  <div
+    class="settings-container"
+    :data-title="title"
+    :style="{borderWidth: borderWidth || 1}"
+  >
+    <slot />
   </div>
 </template>
 <script>
 export default {
-  name: "settings-container",
-  props: ["title", "border-width"]
+  name: "SettingsContainer",
+  props: ["title", "borderWidth"]
 }
 </script>
 <style lang="stylus" scoped>

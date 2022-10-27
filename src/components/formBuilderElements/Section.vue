@@ -1,40 +1,67 @@
 <template>
   <div class="builder-section">
     <div class="order-control-container">
-      <div class="order-control" @click="moveUp">🠭</div>
-      <div class="order-control" @click="moveDown">🠯</div>
+      <div
+        class="order-control"
+        @click="moveUp"
+      >
+        🠭
+      </div>
+      <div
+        class="order-control"
+        @click="moveDown"
+      >
+        🠯
+      </div>
     </div>
     <div class="section-container">
       <div class="section-title">
-        <span class="fold-control" @click="toggleFold">{{ isFolded ? '[+]' : '[–]'}}</span><span :style="{ color }">{{sectionTitle}}</span><span class="page-counts">({{section.length}} page{{section.length > 1 ? 's' : ''}})</span>
+        <span
+          class="fold-control"
+          @click="toggleFold"
+        >{{ isFolded ? '[+]' : '[–]' }}</span><span :style="{ color }">{{ sectionTitle }}</span><span class="page-counts">({{ section.length }} page{{ section.length > 1 ? 's' : '' }})</span>
       </div>
-      <div class="folded-section" v-if="isFolded">
+      <div
+        v-if="isFolded"
+        class="folded-section"
+      >
         <div class="first-page-title">
           {{ firstPageTitle }}
         </div>
-        <div class="dots-decoration" @click="toggleFold">
+        <div
+          class="dots-decoration"
+          @click="toggleFold"
+        >
           ●●●
         </div>
       </div>
-      <div class="pages" v-else>
+      <div
+        v-else
+        class="pages"
+      >
         <div class="section-folding-control">
-          <a @click="expandAllPages" class="fold-button">[+] Expand All</a>
+          <a
+            class="fold-button"
+            @click="expandAllPages"
+          >[+] Expand All</a>
           <span>|</span>
-          <a @click="foldAllPages" class="fold-button">[–] Fold All</a>
+          <a
+            class="fold-button"
+            @click="foldAllPages"
+          >[–] Fold All</a>
         </div>
         <builderPage 
           v-for="(page, i) in section" 
-          v-bind:key="`builder-page-${i}`" 
+          :key="`builder-page-${i}`" 
           :page="page" 
-          :pageNumber="i" 
+          :page-number="i" 
           :color="color"
-          :isFolded="pageFolds[i]"
+          :is-folded="pageFolds[i]"
           @toggleFold="() => togglePageFold(i)"
           @moveUp="() => movePageUp(i)"
           @moveDown="() => movePageDown(i)"
         />
       </div>
-      
     </div>
   </div>
 </template>
@@ -42,11 +69,11 @@
 <script>
 import builderPage from "@/components/formBuilderElements/Page.vue";
 export default {
-  name: 'builderSection',
-  props: ['section', 'color', 'sectionTitle', 'isFolded'],
+  name: 'BuilderSection',
   components: {
     builderPage
   },
+  props: ['section', 'color', 'sectionTitle', 'isFolded'],
   data () {
     return {
       firstPageTitle: null,

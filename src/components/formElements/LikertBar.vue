@@ -1,40 +1,59 @@
 <template>
-  <div class="likert-bar" :class="{subsection: eldata.subsection }" :id="`form-el-${eldata.name}`" v-bind:value="value">
+  <div
+    :id="`form-el-${eldata.name}`"
+    class="likert-bar"
+    :class="{subsection: eldata.subsection }"
+    :value="value"
+  >
     <div class="title-row">
       <label class="title">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
-      <HelpText :text="eldata.help" :name="eldata.name"/>
+      <HelpText
+        :text="eldata.help"
+        :name="eldata.name"
+      />
     </div>
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
     <div class="option-row">
       <div
-        class="option-cell"
         v-for="(option, oi) in options"
-        v-bind:key="`${eldata.name}-option-${oi+1}`"
-        v-on:click="selectOption(oi)"
+        :key="`${eldata.name}-option-${oi+1}`"
+        class="option-cell"
+        @click="selectOption(oi)"
       >
         <div class="option-label">
           <input
-          type="radio"
-          :name="`${eldata.name}-option`"
-          :id="`${eldata.name}-option-${oi+1}`"
-          :value="option"
-          :checked="selectedOption === oi"
-          />
-          <div class="checkmark" :class="{ 'check-selected': (selectedOption === oi) ? true : false}">
-            <label :for="`${eldata.name}-option-${oi+1}`">{{option}}</label>
+            :id="`${eldata.name}-option-${oi+1}`"
+            type="radio"
+            :name="`${eldata.name}-option`"
+            :value="option"
+            :checked="selectedOption === oi"
+          >
+          <div
+            class="checkmark"
+            :class="{ 'check-selected': (selectedOption === oi) ? true : false}"
+          >
+            <label :for="`${eldata.name}-option-${oi+1}`">{{ option }}</label>
           </div>
         </div> 
       </div>
     </div>
-    <div class="hint-row" v-if="eldata.options.startText || eldata.options.endText">
+    <div
+      v-if="eldata.options.startText || eldata.options.endText"
+      class="hint-row"
+    >
       <div class="start-text hint-text-container">
         <div class="hint-text">
-          {{eldata.options.startText}}
+          {{ eldata.options.startText }}
         </div>
       </div>
       <div class="end-text hint-text-container">
         <div class="hint-text">
-          {{eldata.options.endText}}
+          {{ eldata.options.endText }}
         </div>
       </div>
     </div>
@@ -45,10 +64,10 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "LikertBar",
-  props: ["eldata", "value"],
   components: {
     HelpText
   },
+  props: ["eldata", "value"],
   data() {
     return {
       selectedOption: null,
@@ -57,17 +76,17 @@ export default {
       options: []
     };
   },
+  watch: {
+    selectedOption: function (val, oldVal) {
+      this.$emit('input', this.options[val]);
+    }
+  },
   mounted() {
     this.options = []
     for (let i = this.eldata.options.from; i <= this.eldata.options.to; i++) {
       this.options.push(i)
     }
     if (this.value != null) this.selectedOption = this.options.indexOf(this.value)
-  },
-  watch: {
-    selectedOption: function (val, oldVal) {
-      this.$emit('input', this.options[val]);
-    }
   },
   methods: {
     selectOption(option) {

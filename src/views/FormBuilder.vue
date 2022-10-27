@@ -1,24 +1,42 @@
 <template>
   <div id="form-builder">
     <settingsContainer title="Form Settings">
-      <builderInputRow label="Form color" name="form-color">
-        <input type="text" name="form-color" v-model="formColor">
-        <div class="color-display" :style="colorDisplayStyle"></div>
+      <builderInputRow
+        label="Form color"
+        name="form-color"
+      >
+        <input
+          v-model="formColor"
+          type="text"
+          name="form-color"
+        >
+        <div
+          class="color-display"
+          :style="colorDisplayStyle"
+        />
       </builderInputRow>
     </settingsContainer>
     <settingsContainer title="Sections">
       <div class="section-folding-control">
-        <a @click="expandAllSections" class="fold-button">[+] Expand All</a>
+        <a
+          class="fold-button"
+          @click="expandAllSections"
+        >[+] Expand All</a>
         <span>|</span>
-        <a @click="foldAllSections" class="fold-button">[–] Fold All</a>
+        <a
+          class="fold-button"
+          @click="foldAllSections"
+        >[–] Fold All</a>
       </div>
 
       <div class="form-sections">
         <builderSection 
           v-for="(section, i) in sections"
-          v-bind:key="`builder-section-${i}`"
-          :section="section" :section-title="`Section ${i + 1}`"
-          :color="formColor" :isFolded="sectionFolds[i]"
+          :key="`builder-section-${i}`"
+          :section="section"
+          :section-title="`Section ${i + 1}`"
+          :color="formColor"
+          :is-folded="sectionFolds[i]"
           @toggleFold="() => toggleFold(i)"
           @moveUp="() => moveUp(i)"
           @moveDown="() => moveDown(i)"
@@ -35,7 +53,7 @@ import builderSection from "@/components/formBuilderElements/Section.vue";
 import settingsContainer from "@/components/formBuilderElements/SettingsContainer.vue";
 
 export default {
-  name: 'form-builder',
+  name: 'FormBuilder',
   components: {
     builderInputRow,
     builderSection,
@@ -48,17 +66,17 @@ export default {
       sectionFolds: []
     }
   },
-  mounted () {
-    this.formColor = FormData.color || this.formColor
-    this.sections = [...FormData.sections] || this.sections
-    this.sectionFolds = this.sections.map(() => false)
-  },
   computed: {
     colorDisplayStyle() {
       return {
         background: this.formColor || '#1c4a81'
       }
     }
+  },
+  mounted () {
+    this.formColor = FormData.color || this.formColor
+    this.sections = [...FormData.sections] || this.sections
+    this.sectionFolds = this.sections.map(() => false)
   },
   methods: {
     expandAllSections () {

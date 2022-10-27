@@ -1,10 +1,27 @@
 <template>
   <div>
-    <builderInputRow label="Minimum value" name="min-text">
-      <input type="number" name="min-text" v-model="question.validationRules.min" style="width: 100%"/>
+    <builderInputRow
+      label="Minimum value"
+      name="min-text"
+    >
+      <input
+        v-model="question.validationRules.min"
+        type="number"
+        name="min-text"
+        style="width: 100%"
+      >
     </builderInputRow>
-    <builderInputRow label="Maxmimum value" name="max-text">
-      <input type="number" name="max-text" v-model="question.validationRules.max" style="width: 100%" min="0"/>
+    <builderInputRow
+      label="Maxmimum value"
+      name="max-text"
+    >
+      <input
+        v-model="question.validationRules.max"
+        type="number"
+        name="max-text"
+        style="width: 100%"
+        min="0"
+      >
     </builderInputRow>
   </div>
 </template>
@@ -12,10 +29,10 @@
 import builderInputRow from "@/components/formBuilderElements/InputRow.vue";
 export default {
   name: 'NumberQuestion',
-  props: ['question'],
   components: {
     builderInputRow
-  }
+  },
+  props: ['question']
 }
 </script>
 <style lang="stylus" scoped>

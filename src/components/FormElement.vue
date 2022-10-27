@@ -1,76 +1,76 @@
 <template>
   <div
+    v-if="formel.type != 'function'"
+    ref="formElement"
     class="form-element"
     :class="{ 'sub-element': subelement, 'sub-section': formel.subsection }"
     :value="value"
-    ref="formElement"
     @focusout="handleFocusOut"
-    v-if="formel.type != 'function'"
-    >
+  >
     <div class="error">
       {{ error }}
     </div>
-    <Separator v-if="formel.type === 'separator'" />
+    <FormSeparator v-if="formel.type === 'separator'" />
     <TextField
       v-if="formel.type === 'text'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
     <NumberField
       v-if="formel.type === 'number'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
     <TextArea
       v-if="formel.type === 'long-text'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
     <DateField
       v-if="formel.type === 'date'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
     <RadioGroup
       v-if="formel.type === 'radio'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
     <LikertTable
       v-if="formel.type === 'likert-table'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
     <LikertBar
       v-if="formel.type === 'likert-bar'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
     <CheckboxGroup
       v-if="formel.type === 'checkbox'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
-    <Section
+    <FormSection
       v-if="formel.type === 'section'"
-      :eldata="formel"
       v-model="elementValue"
-      :isSectionValid="isSectionValid"
+      :eldata="formel"
+      :is-section-valid="isSectionValid"
     />
     <FormImage
       v-if="formel.type === 'image'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
     <FormVideo
       v-if="formel.type === 'video'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
     <StudyIdField
       v-if="formel.type === 'studyid'"
-      :eldata="formel"
       v-model="elementValue"
+      :eldata="formel"
     />
   </div>
 </template>
@@ -79,7 +79,7 @@
 import epLogger from "@/logger.js"
 import { object, string, date, number, array, boolean } from "yup";
 import {
-  Separator,
+  FormSeparator,
   TextField,
   NumberField,
   TextArea,
@@ -88,16 +88,15 @@ import {
   LikertTable,
   LikertBar,
   CheckboxGroup,
-  Section,
+  FormSection,
   FormImage,
   FormVideo,
   StudyIdField,
 } from "@/components/formElements/index.js";
 export default {
   name: "FormElement",
-  props: ["formel", "subelement", "value", "isValid"],
   components: {
-    Separator,
+    FormSeparator,
     TextField,
     NumberField,
     TextArea,
@@ -106,17 +105,32 @@ export default {
     LikertTable,
     LikertBar,
     CheckboxGroup,
-    Section,
+    FormSection,
     FormImage,
     FormVideo,
     StudyIdField
   },
+  props: ["formel", "subelement", "value", "isValid"],
   data() {
     return {
       elementValue: this.value,
       error: "",
       validationSchema: {},
     };
+  },
+  watch: {
+    elementValue: {
+      handler: function (val, oldVal) {
+        this.$emit("input", val);
+      },
+      deep: true,
+    },
+    value: {
+      handler: function (val, oldVal) {
+        this.elementValue = val;
+      },
+      deep: true,
+    },
   },
   mounted() {
     /* if (document.querySelector("input"))
@@ -257,20 +271,6 @@ export default {
           break;
       }
       return this.validationSchema = validationSchema;
-    },
-  },
-  watch: {
-    elementValue: {
-      handler: function (val, oldVal) {
-        this.$emit("input", val);
-      },
-      deep: true,
-    },
-    value: {
-      handler: function (val, oldVal) {
-        this.elementValue = val;
-      },
-      deep: true,
     },
   },
 };

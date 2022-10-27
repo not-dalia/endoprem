@@ -1,44 +1,126 @@
 <template>
   <div class="builder-question">
     <div class="order-control-container">
-      <div class="order-control" @click="moveUp">🠭</div>
-      <div class="order-control" @click="moveDown">🠯</div>
+      <div
+        class="order-control"
+        @click="moveUp"
+      >
+        🠭
+      </div>
+      <div
+        class="order-control"
+        @click="moveDown"
+      >
+        🠯
+      </div>
     </div>
     <div class="question-container">
       <div class="question-title">
-        <span class="fold-control" @click="toggleFold">{{ isFolded ? '[+]' : '[–]'}}</span><span :style="{ color }">Question {{questionNumber}}</span><span v-if="isFolded" class="question-type">({{question.type}})</span><span v-if="isFolded && question.name" class="question-type">({{question.name}})</span>
+        <span
+          class="fold-control"
+          @click="toggleFold"
+        >{{ isFolded ? '[+]' : '[–]' }}</span><span :style="{ color }">Question {{ questionNumber }}</span><span
+          v-if="isFolded"
+          class="question-type"
+        >({{ question.type }})</span><span
+          v-if="isFolded && question.name"
+          class="question-type"
+        >({{ question.name }})</span>
       </div>
-      <div class="folded-question" v-if="isFolded">
+      <div
+        v-if="isFolded"
+        class="folded-question"
+      >
         <div class="first-page-title">
           {{ questionText }}
         </div>
-        <div class="dots-decoration" @click="toggleFold">
+        <div
+          class="dots-decoration"
+          @click="toggleFold"
+        >
           ●●●
         </div>
       </div>
-      <div class="question-details" v-else>
-        <builderInputRow label="Question Type" name="question-type">
-          <select name="question-type" v-model="question.type" style="width: 100%">
-            <option v-for="questionType in questionTypes" :key="`builder-question-type-${questionType}`" :value="questionType">{{questionType}}</option>
+      <div
+        v-else
+        class="question-details"
+      >
+        <builderInputRow
+          label="Question Type"
+          name="question-type"
+        >
+          <select
+            v-model="question.type"
+            name="question-type"
+            style="width: 100%"
+          >
+            <option
+              v-for="questionType in questionTypes"
+              :key="`builder-question-type-${questionType}`"
+              :value="questionType"
+            >
+              {{ questionType }}
+            </option>
           </select>
         </builderInputRow>
-        <builderInputRow label="Unique ID" name="question-id">
-          <input type="text" name="question-id" v-model="question.name" style="width: 100%"/>
+        <builderInputRow
+          label="Unique ID"
+          name="question-id"
+        >
+          <input
+            v-model="question.name"
+            type="text"
+            name="question-id"
+            style="width: 100%"
+          >
         </builderInputRow>
-        <builderInputRow label="Question Text" name="question-text">
-          <input type="text" name="question-text" v-model="question.question" style="width: 100%"/>
+        <builderInputRow
+          label="Question Text"
+          name="question-text"
+        >
+          <input
+            v-model="question.question"
+            type="text"
+            name="question-text"
+            style="width: 100%"
+          >
         </builderInputRow>
-        <builderInputRow label="Question description" name="question-description">
-          <textarea name="question-description" v-model="question.description" style="width: 100%"/>
+        <builderInputRow
+          label="Question description"
+          name="question-description"
+        >
+          <textarea
+            v-model="question.description"
+            name="question-description"
+            style="width: 100%"
+          />
         </builderInputRow>
-        <builderInputRow label="Question help" name="question-help">
-          <textarea name="question-help" v-model="question.help" style="width: 100%"/>
+        <builderInputRow
+          label="Question help"
+          name="question-help"
+        >
+          <textarea
+            v-model="question.help"
+            name="question-help"
+            style="width: 100%"
+          />
         </builderInputRow>
-        <builderInputRow label="Required" name="question-required" v-if="question.validationRules">
-          <input type="checkbox" name="question-required" v-model="question.validationRules.required"/>
+        <builderInputRow
+          v-if="question.validationRules"
+          label="Required"
+          name="question-required"
+        >
+          <input
+            v-model="question.validationRules.required"
+            type="checkbox"
+            name="question-required"
+          >
         </builderInputRow>
         <keep-alive>
-          <component :is="questionComponent" :question="question" />
+          <component
+            :is="questionComponent"
+            :question="question"
+          />
         </keep-alive>
       </div>
     </div>
@@ -54,10 +136,18 @@ const DateQuestion = () => import("@/components/formBuilderElements/questionType
 const NumberQuestion = () => import("@/components/formBuilderElements/questionTypes/NumberQuestion.vue")
 const RadioQuestion = () => import("@/components/formBuilderElements/questionTypes/RadioQuestion.vue")
 export default {
-  name: 'builderQuestion',
-  props: ['question', 'color', 'question-number', 'isFolded'],
+  name: 'BuilderQuestion',
   components: {
     builderInputRow
+  },
+  props: ['question', 'color', 'question-number', 'isFolded'],
+  data () {
+    return {
+      questionText: null,
+      questionTypes: [
+        'date', 'number', 'text', 'long-text', 'radio', 'likert-table', 'likert-bar', 'checkbox', 'image', 'video', 'separator', 'section'
+      ]
+    }
   },
   computed: {
     questionComponent () {
@@ -77,14 +167,6 @@ export default {
         default: 
           return ImageHolder
       }
-    }
-  },
-  data () {
-    return {
-      questionText: null,
-      questionTypes: [
-        'date', 'number', 'text', 'long-text', 'radio', 'likert-table', 'likert-bar', 'checkbox', 'image', 'video', 'separator', 'section'
-      ]
     }
   },
   watch: {

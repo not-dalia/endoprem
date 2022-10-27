@@ -1,26 +1,37 @@
 <template>
   <div
-    class="question-section"
     :id="`form-el-${eldata.name}`"
-    v-bind:value="value"
+    class="question-section"
+    :value="value"
     :class="{ subsection: eldata.subsection }"
   >
     <transition name="slide-fade">
       <div v-if="show">
         <div class="title-row">
-          <div class="title" v-if="eldata.title">{{ eldata.title }}</div>
-          <HelpText :text="eldata.help" :name="eldata.name"/>
+          <div
+            v-if="eldata.title"
+            class="title"
+          >
+            {{ eldata.title }}
+          </div>
+          <HelpText
+            :text="eldata.help"
+            :name="eldata.name"
+          />
         </div>
-        <div class="desc" v-if="eldata.description">
+        <div
+          v-if="eldata.description"
+          class="desc"
+        >
           {{ eldata.description }}
         </div>
         <FormElement
           v-for="(q, j) in eldata.questions"
-          v-bind:key="`sub-form-el-${j}`"
+          :key="`sub-form-el-${j}`"
+          v-model="result[q.name]"
           :formel="q"
           :subelement="true"
-          v-model="result[q.name]"
-          :isValid="(isValid) => isElementValid(isValid, q.name)"
+          :is-valid="(isValid) => isElementValid(isValid, q.name)"
         />
       </div>
     </transition>
@@ -30,12 +41,12 @@
 <script>
 import HelpText from "@/components/HelpText.vue";
 export default {
-  name: "Section",
-  props: ["eldata", "value", "isSectionValid"],
+  name: "FormSection",
   components: {
     FormElement: () => import("@/components/FormElement.vue"),
     HelpText,
   },
+  props: ["eldata", "value", "isSectionValid"],
   data() {
     return {
       show: true,

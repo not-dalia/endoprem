@@ -1,11 +1,10 @@
 <template>
-  <div class="sub-separator">
-  </div>
+  <div class="sub-separator" />
 </template>
 
 <script>
 export default {
-  name: 'Separator'
+  name: 'FormSeparator'
 }
 </script>
 

@@ -1,10 +1,31 @@
 <template>
-  <div class="progress-bar" role="progressbar" :aria-valuemin="0" :aria-valuenow="getWidth()" :aria-valuemax="100">
+  <div
+    class="progress-bar"
+    role="progressbar"
+    :aria-valuemin="0"
+    :aria-valuenow="getWidth()"
+    :aria-valuemax="100"
+  >
     <div class="bar-container">
-      <div class="bar-fill" :style="{width: getWidth(), background: color}"></div>
-      <div :class="{'page-number': true, done: i - 1 < page}" v-for="i in totalPages" v-bind:key="`progress-page-${i - 1}`" :style="{left: `${(i-1)*(100/(totalPages-1))}%`, background: i - 1 < page ? color : 'inherit'}">
-        <div v-if="i != totalPages" :aria-current="page == i ? 'step': null" >{{ i }}</div>
-        <div v-if="i == totalPages"><i class="fas fa-check"></i></div>
+      <div
+        class="bar-fill"
+        :style="{width: getWidth(), background: color}"
+      />
+      <div
+        v-for="i in totalPages"
+        :key="`progress-page-${i - 1}`"
+        :class="{'page-number': true, done: i - 1 < page}"
+        :style="{left: `${(i-1)*(100/(totalPages-1))}%`, background: i - 1 < page ? color : 'inherit'}"
+      >
+        <div
+          v-if="i != totalPages"
+          :aria-current="page == i ? 'step': null"
+        >
+          {{ i }}
+        </div>
+        <div v-if="i == totalPages">
+          <i class="fas fa-check" />
+        </div>
       </div>
     </div>
   </div>
@@ -21,13 +42,13 @@ export default {
       // totalPages: 5
     }
   },
-  mounted () {
-    
-  },
   watch: {
     // progress: function (val, oldVal) {
     //     this.$emit('input', this.defaultValues)
     // }
+  },
+  mounted () {
+    
   },
   methods: {
     getWidth() {

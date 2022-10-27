@@ -1,54 +1,67 @@
 <template>
-  <div class="date-field" :class="{subsection: eldata.subsection }"  :id="`form-el-${eldata.name}`" v-bind:value="value">
+  <div
+    :id="`form-el-${eldata.name}`"
+    class="date-field"
+    :class="{subsection: eldata.subsection }"
+    :value="value"
+  >
     <div class="title-row">
       <label class="title">
         <span>{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</span>
       </label>
-      <HelpText :text="eldata.help" :name="eldata.name"/>
+      <HelpText
+        :text="eldata.help"
+        :name="eldata.name"
+      />
     </div>
 
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
     <div class="date-row">
       <div class="date-col">
-        <label :for="`${eldata.name}-code1`"></label>
+        <label :for="`${eldata.name}-code1`" />
         <input
+          :id="`${eldata.name}-code1`"
+          v-model="selectedDate.code1"
           type="text"
           maxlength="2"
           placeholder="XX"
           :name="`${eldata.name}-code1`"
-          :id="`${eldata.name}-code1`"
-          v-model="selectedDate.code1"
-          @input="($event) => onCodeInput($event, 'code1')"
           style="width: 2em;"
-        />
+          @input="($event) => onCodeInput($event, 'code1')"
+        >
       </div>
       <div class="date-col">
-        <label :for="`${eldata.name}-code2`"></label>
+        <label :for="`${eldata.name}-code2`" />
         <input
+          :id="`${eldata.name}-code2`"
+          v-model="selectedDate.code2"
           type="number"
           placeholder="000000"
           size="6"
           maxlength="6"
           :name="`${eldata.name}-code2`"
-          :id="`${eldata.name}-code2`"
-          v-model="selectedDate.code2"
-          @input="($event) => onCodeInput($event, 'code2')"
           style="width: 6em;"
-        />
+          @input="($event) => onCodeInput($event, 'code2')"
+        >
       </div>
       <div class="date-col">
-        <label :for="`${eldata.name}-code3`"></label>
+        <label :for="`${eldata.name}-code3`" />
         <input
+          :id="`${eldata.name}-code3`"
+          v-model="selectedDate.code3"
           type="number"
           placeholder="000000000"
           size="9"
           maxlength="9"
           :name="`${eldata.name}-code3`"
-          :id="`${eldata.name}-code3`"
-          v-model="selectedDate.code3"
-          @input="($event) => onCodeInput($event, 'code3')"
           style="width: 9rem;"
-        />
+          @input="($event) => onCodeInput($event, 'code3')"
+        >
       </div>
     </div>
   </div>
@@ -58,10 +71,10 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "StudyIdField",
-  props: ["eldata", "value"],
   components: {
     HelpText
   },
+  props: ["eldata", "value"],
   data() {
     return {
       today: new Date(),
@@ -71,6 +84,23 @@ export default {
         code3: this.value? this.value.code3 : null
       }
     };
+  }, 
+  watch: {
+    selectedDate: {
+      handler: function (val, oldVal) {
+        this.$emit('input', val);
+      },
+      deep: true
+    }, 
+    value: {
+      handler: function (val, oldVal) {
+        if (!val) return;
+        this.selectedDate.day = val.day;
+        this.selectedDate.month = val.month;
+        this.selectedDate.year = val.year;
+      },
+      deep: true
+    }
   },
   mounted() {
   },
@@ -93,23 +123,6 @@ export default {
         currentIndex + 1 :
         0
       ).focus();
-    }
-  }, 
-  watch: {
-    selectedDate: {
-      handler: function (val, oldVal) {
-        this.$emit('input', val);
-      },
-      deep: true
-    }, 
-    value: {
-      handler: function (val, oldVal) {
-        if (!val) return;
-        this.selectedDate.day = val.day;
-        this.selectedDate.month = val.month;
-        this.selectedDate.year = val.year;
-      },
-      deep: true
     }
   }
 };

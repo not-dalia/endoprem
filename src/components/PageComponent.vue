@@ -1,21 +1,31 @@
 <template>
-  <div class="page" :value="value" ref="page">
+  <div
+    ref="page"
+    class="page"
+    :value="value"
+  >
     <div class="section">
-      <h1 class="title" :style="{ color: color }">
+      <h1
+        class="title"
+        :style="{ color: color }"
+      >
         {{ page[currentQuestion].title }}
       </h1>
       <!-- <div class="separator"></div> -->
-      <div class="description" v-if="page[currentQuestion].description">
+      <div
+        v-if="page[currentQuestion].description"
+        class="description"
+      >
         {{ page[currentQuestion].description }}
       </div>
       <FormElement
-        :id="`form-el-${currentQuestion}-${j}`"
         v-for="(q, j) in page[currentQuestion].questions"
-        v-bind:key="`form-el-${currentQuestion}-${j}`"
-        :formel="q"
+        :id="`form-el-${currentQuestion}-${j}`"
+        :key="`form-el-${currentQuestion}-${j}`"
         v-model="value[q.name]"
+        :formel="q"
         :color="color"
-        :isValid="(isValid) => isElementValid(isValid, q.name)"
+        :is-valid="(isValid) => isElementValid(isValid, q.name)"
       />
     </div>
 
@@ -31,7 +41,10 @@
 import FormElement from "@/components/FormElement.vue";
 import epLogger from "@/logger.js";
 export default {
-  name: "Page",
+  name: "PageComponent",
+  components: {
+    FormElement,
+  },
   props: [
     "page",
     "value",
@@ -40,9 +53,6 @@ export default {
     "progressToNext",
     "currentPage",
   ],
-  components: {
-    FormElement,
-  },
   data() {
     return {
       result: null,
@@ -53,17 +63,6 @@ export default {
       isDataValid: false,
       validationCount: -1,
     };
-  },
-  mounted() {
-    if (this.$attrs.value != null)
-      this.defaultValues = { ...this.$attrs.value };
-    epLogger(
-      this.$cookies.get("endoprem_si"),
-      { page: this.currentPage, question: this.currentQuestion },
-      "page_load"
-    );
-    this.populateValidationObject();
-    document.querySelector('body').focus()
   },
   watch: {
     currentQuestion: function (val, oldVal) {
@@ -122,6 +121,17 @@ export default {
       },
       deep: true,
     },
+  },
+  mounted() {
+    if (this.$attrs.value != null)
+      this.defaultValues = { ...this.$attrs.value };
+    epLogger(
+      this.$cookies.get("endoprem_si"),
+      { page: this.currentPage, question: this.currentQuestion },
+      "page_load"
+    );
+    this.populateValidationObject();
+    document.querySelector('body').focus()
   },
   created() {
     this.$root.$on("validate", this.requestNext);

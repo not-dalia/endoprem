@@ -1,65 +1,87 @@
 <template>
   <div
+    :id="`form-el-${eldata.name}`"
     class="text-area"
     :class="{ subsection: eldata.subsection }"
-    :id="`form-el-${eldata.name}`"
-    v-bind:value="value"
+    :value="value"
   >
     <div class="title-row">
-      <label :for="eldata.name" class="title"
-        >{{ eldata.question }}
+      <label
+        :for="eldata.name"
+        class="title"
+      >{{ eldata.question }}
         {{
           eldata.validationRules && eldata.validationRules.required ? "(*)" : ""
-        }}</label
-      >
-      <HelpText :text="eldata.help" :name="eldata.name" />
+        }}</label>
+      <HelpText
+        :text="eldata.help"
+        :name="eldata.name"
+      />
     </div>
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
     <div class="input-container">
       <textarea
-        :name="eldata.name"
         :id="eldata.name"
         v-model="textval"
-      ></textarea>
+        :name="eldata.name"
+      />
       <div
-        :class="`mic ${isRecording ? 'recording' : ''}`"
-        @click="toggleAudioRecorder"
         v-show="!audioSrc"
         v-if="eldata.canRecordAudio"
+        :class="`mic ${isRecording ? 'recording' : ''}`"
+        @click="toggleAudioRecorder"
       >
-        <span v-if="!isRecording" class="record-title">Record Audio</span>
-        <span v-if="isRecording" class="record-title">Recording... {{getTimeInMinutes()}}</span>
+        <span
+          v-if="!isRecording"
+          class="record-title"
+        >Record Audio</span>
+        <span
+          v-if="isRecording"
+          class="record-title"
+        >Recording... {{ getTimeInMinutes() }}</span>
         <img
           src="@/assets/microphone.svg"
           style="height: 1.3rem"
           alt="Record audio"
           title="Record audio"
-        />
+        >
         <VueRecordAudio
-          @result="onRecordingResult"
-          mode="press"
           :ref="`audio_${eldata.name}`"
+          mode="press"
+          @result="onRecordingResult"
         />
       </div>
-      <div class="audio-controls" v-show="audioSrc"         v-if="eldata.canRecordAudio"
+      <div
+        v-show="audioSrc"
+        v-if="eldata.canRecordAudio"
+        class="audio-controls"
       >
-        <div :class="`mic delete`" @click="deleteAudioFile" v-show="audioSrc">
+        <div
+          v-show="audioSrc"
+          :class="`mic delete`"
+          @click="deleteAudioFile"
+        >
           <img
             src="@/assets/delete.svg"
             style="height: 1.3rem"
             alt="Delete audio"
             title="Delete audio"
-          />
+          >
           <audio
-            :src="audioSrc"
             :ref="`playback_${eldata.name}`"
+            :src="audioSrc"
             @ended="playbackEnded"
           />
         </div>
         <div
+          v-show="audioSrc"
           :class="`mic playback ${isPlaying ? 'playing' : ''}`"
           @click="toggleAudioPlayback"
-          v-show="audioSrc"
         >
           <img
             v-if="!isPlaying"
@@ -67,17 +89,17 @@
             style="height: 1.3rem"
             alt="Play audio"
             title="Play audio"
-          />
+          >
           <img
             v-if="isPlaying"
             src="@/assets/stop.svg"
             style="height: 1.3rem"
             alt="Stop audio"
             title="Stop audio"
-          />
+          >
           <audio
-            :src="audioSrc"
             :ref="`playback_${eldata.name}`"
+            :src="audioSrc"
             @ended="playbackEnded"
           />
         </div>
@@ -90,10 +112,10 @@
 import HelpText from "@/components/HelpText.vue";
 export default {
   name: "TextArea",
-  props: ["eldata", "value"],
   components: {
     HelpText,
   },
+  props: ["eldata", "value"],
   data() {
     return {
       audioSrc: null,
@@ -105,14 +127,6 @@ export default {
       timer: null,
       audioTimer: 0
     };
-  },
-  created() {},
-  mounted() {
-    if (this.value && this.value.text) this.textval = this.value.text;
-    if (this.eldata && this.eldata.canRecordAudio && this.value && this.value.audio && !this.audioData) {
-      let blob = this.base64ToBlob(this.value.audio)
-      this.onRecordingResult(blob);
-    }
   },
   watch: {
     audioData: {
@@ -135,6 +149,14 @@ export default {
         });
       },
     },
+  },
+  created() {},
+  mounted() {
+    if (this.value && this.value.text) this.textval = this.value.text;
+    if (this.eldata && this.eldata.canRecordAudio && this.value && this.value.audio && !this.audioData) {
+      let blob = this.base64ToBlob(this.value.audio)
+      this.onRecordingResult(blob);
+    }
   },
   beforeDestroy (to, from, next) {
     this.$refs[`audio_${this.eldata.name}`] && this.$refs[`audio_${this.eldata.name}`].stop();

@@ -1,16 +1,24 @@
 <template>
   <div id="placeholder">
-    <router-link to="/before">Before the test</router-link><br>
-    <router-link to="/during">During the test</router-link><br>
-    <router-link to="/after">After the test</router-link><br>
-    <router-link to="/all">Combined Form</router-link>
+    <router-link to="/before">
+      Before the test
+    </router-link><br>
+    <router-link to="/during">
+      During the test
+    </router-link><br>
+    <router-link to="/after">
+      After the test
+    </router-link><br>
+    <router-link to="/all">
+      Combined Form
+    </router-link>
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'placeholder',
+  name: 'PlaceholderPage',
   components: {
     
   }

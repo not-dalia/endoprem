@@ -1,9 +1,23 @@
 <template>
-  <div :class="`help-text ${isOpen? 'open-help-text' : ''}`" v-on:click.stop.prevent="handleFocus" v-on:keypress.prevent v-on:keyup.space.enter.stop="handleFocus" role="button"
-        @focusout="handleFocusOut"
-        tabindex="0" v-show="text">
-    <div class="question-mark-help-text">?</div>
-    <div v-if="isOpen" class="text-help-text">{{ text }}</div>
+  <div
+    v-show="text"
+    :class="`help-text ${isOpen? 'open-help-text' : ''}`"
+    role="button"
+    tabindex="0"
+    @click.stop.prevent="handleFocus"
+    @keypress.prevent
+    @keyup.space.enter.stop="handleFocus"
+    @focusout="handleFocusOut"
+  >
+    <div class="question-mark-help-text">
+      ?
+    </div>
+    <div
+      v-if="isOpen"
+      class="text-help-text"
+    >
+      {{ text }}
+    </div>
   </div>
 </template>
 
