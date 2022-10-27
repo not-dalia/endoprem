@@ -18,9 +18,11 @@ export default {
     }
   },
   mounted () {
-    if (!this.$cookies.isKey('endoprem_si')) {
+    // Enable cookie setting for logging interactions
+    if (process.env.VUE_APP_LOG_INTERACTIONS && !this.$cookies.isKey('endoprem_si')) {
       this.$cookies.set('endoprem_si', uuid.v4());
     }
+    
     this.handleWindowSizeChange()
     window.addEventListener("resize", this.handleWindowSizeChange);
   },
@@ -29,9 +31,7 @@ export default {
   },
   methods: {
     handleWindowSizeChange () {
-      this.windowSize = window.innerWidth
-|| document.documentElement.clientWidth
-|| document.body.clientWidth;
+      this.windowSize = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     }
   }
 }
@@ -64,8 +64,6 @@ html {
 }
 
 body {
-  // background-color #607d8b
-  // padding 30px 0
   min-height: 100%;
   margin: 0 !important;
 }
@@ -84,11 +82,6 @@ div:focus, input:focus {
 }
 
 @media only screen and (max-width: 600px)  {
-  body {
-    // background-color #607d8b
-    // padding 30px 0
-  }
-
   .title-row {
     font-size: 1.1rem;
     display: flex;
