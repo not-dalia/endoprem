@@ -8,7 +8,7 @@
     <PreHealthForm />
     <footer>
       <div class="footer-content">
-        <div>What goes in a footer?</div>
+        <!-- <div>FOOTER CONTENT</div> -->
         <div>
           <router-link to="/privacy">
             Privacy Policy

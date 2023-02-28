@@ -456,16 +456,16 @@ Example `section` display element:
 If a new question type is needed, create a component for the question (current components are in in `src/components/formElements/`). Make sure to emit the answer value when it changes using `this.$emit('input', value)`.
 
 
-Import it to `src/components/FormElement.vue`. You will need to add it to the end of the `div.form-element` element. The following example shows how to an imagined `CustomQuestionType` component to `FormElement.vue`:
+Import it to `src/components/FormElementWrapper.vue`. You will need to add it to the end of the `div.form-element` element. The following example shows how to an imagined `CustomQuestionType` component to `FormElementWrapper.vue`:
 ```xml
 <CustomQuestionType
-  v-if="formel.type === 'CUSTOM_QUESTION_TYPE'"
-  :eldata="formel"
+  v-if="elementData.type === 'CUSTOM_QUESTION_TYPE'"
+  :eldata="elementData"
   :color="color"
   v-model="elementValue"
   />
 ```  
-You only need to change the `CustomQuestionType` and `CUSTOM_QUESTION_TYPE` to your new component. Validation is done using <a href="https://www.npmjs.com/package/yup">yup</a> and the validation schema is defined in `src/components/FormElement.vue` in the `buildValidationSchema()` method. If you need to validate your custom question type, add your validation rules to the `buildValidationSchema()` method.
+You only need to change the `CustomQuestionType` and `CUSTOM_QUESTION_TYPE` to your new component. Validation is done using <a href="https://www.npmjs.com/package/yup">yup</a> and the validation schema is defined in `src/components/FormElementWrapper.vue` in the `buildValidationSchema()` method. If you need to validate your custom question type, add your validation rules to the `buildValidationSchema()` method.
 
 ### Actions
 Options in a `radio` or `checkbox` type question can trigger actions that would affect the flow of the survey based on the selected answers. Currently only two types of actions are supported:

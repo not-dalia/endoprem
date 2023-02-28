@@ -8,8 +8,9 @@ import VueCookies from 'vue-cookies'
 Vue.config.productionTip = false
 Vue.config.unwrapInjectedRef = true
 Vue.use(VueRouter)
-// Vue.use(VueRecord)
 Vue.use(VueCookies)
+// Vue.use(VueRecord)
+
 Vue.$cookies.config(0)
 
 const eventHub = new Vue()
@@ -17,7 +18,7 @@ const eventHub = new Vue()
 Vue.mixin({
   data: function () {
     return {
-        eventHub: eventHub
+      eventHub: eventHub
     }
   }
 })

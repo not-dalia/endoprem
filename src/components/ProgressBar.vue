@@ -9,21 +9,21 @@
     <div class="bar-container">
       <div
         class="bar-fill"
-        :style="{width: getWidth(), background: color}"
+        :style="{width: getWidth()}"
       />
       <div
-        v-for="i in totalPages"
-        :key="`progress-page-${i - 1}`"
-        :class="{'page-number': true, done: i - 1 < page}"
-        :style="{left: `${(i-1)*(100/(totalPages-1))}%`, background: i - 1 < page ? color : 'inherit'}"
+        v-for="i in totalSections"
+        :key="`progress-section-${i - 1}`"
+        :class="{'section-number': true, done: i - 1 < section}"
+        :style="{left: `${(i - 1) * (100 / (totalSections - 1))}%`}"
       >
         <div
-          v-if="i != totalPages"
-          :aria-current="page == i ? 'step': null"
+          v-if="i != totalSections"
+          :aria-current="section == i ? 'step': null"
         >
           {{ i }}
         </div>
-        <div v-if="i == totalPages">
+        <div v-if="i == totalSections">
           <i class="fas fa-check" />
         </div>
       </div>
@@ -34,25 +34,23 @@
 <script>
 export default {
   name: 'ProgressBar',
-  props: ['progress', 'page', 'totalPages', 'color'], 
-  data () {
-    return {
-      // progress: 50,
-      // page: 2,
-      // totalPages: 5
-    }
-  },
-  watch: {
-    // progress: function (val, oldVal) {
-    //     this.$emit('input', this.defaultValues)
-    // }
-  },
-  mounted () {
-    
+  props: {
+    progress: {
+      type: Number,
+      required: true
+    },
+    section: {
+      type: Number,
+      required: true
+    },
+    totalSections: {
+      type: Number,
+      required: true
+    },
   },
   methods: {
     getWidth() {
-      let width = (this.progress/(this.totalPages-1)) + ((this.page - 1) * 100/(this.totalPages-1));
+      let width = (this.progress / (this.totalSections - 1)) + ((this.section - 1) * 100/(this.totalSections - 1));
       return `${width}%`
     }
   }
@@ -87,7 +85,7 @@ export default {
     bottom: 0;
   }
 
-  .page-number {
+  .section-number {
     height: 26px;
     width: 26px;
     border-radius: 26px;

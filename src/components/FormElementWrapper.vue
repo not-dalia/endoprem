@@ -1,76 +1,76 @@
 <template>
   <div
-    v-if="formel.type != 'function'"
-    ref="formElement"
+    v-if="elementData.type != 'function'"
+    ref="elementData"
     class="form-element"
-    :class="{ 'sub-element': subelement, 'sub-section': formel.subsection }"
+    :class="{ 'sub-element': subelement, 'sub-section': elementData.subsection }"
     :value="value"
     @focusout="handleFocusOut"
   >
     <div class="error">
       {{ error }}
     </div>
-    <FormSeparator v-if="formel.type === 'separator'" />
+    <FormSeparator v-if="elementData.type === 'separator'" />
     <TextField
-      v-if="formel.type === 'text'"
+      v-if="elementData.type === 'text'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <NumberField
-      v-if="formel.type === 'number'"
+      v-if="elementData.type === 'number'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <TextArea
-      v-if="formel.type === 'long-text'"
+      v-if="elementData.type === 'long-text'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <DateField
-      v-if="formel.type === 'date'"
+      v-if="elementData.type === 'date'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <RadioGroup
-      v-if="formel.type === 'radio'"
+      v-if="elementData.type === 'radio'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <LikertTable
-      v-if="formel.type === 'likert-table'"
+      v-if="elementData.type === 'likert-table'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <LikertBar
-      v-if="formel.type === 'likert-bar'"
+      v-if="elementData.type === 'likert-bar'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <CheckboxGroup
-      v-if="formel.type === 'checkbox'"
+      v-if="elementData.type === 'checkbox'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <FormSection
-      v-if="formel.type === 'section'"
+      v-if="elementData.type === 'section'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
       :is-section-valid="isSectionValid"
     />
     <FormImage
-      v-if="formel.type === 'image'"
+      v-if="elementData.type === 'image'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <FormVideo
-      v-if="formel.type === 'video'"
+      v-if="elementData.type === 'video'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
     <StudyIdField
-      v-if="formel.type === 'studyid'"
+      v-if="elementData.type === 'studyid'"
       v-model="elementValue"
-      :eldata="formel"
+      :eldata="elementData"
     />
   </div>
 </template>
@@ -94,7 +94,7 @@ import {
   StudyIdField,
 } from "@/components/formElements/index.js";
 export default {
-  name: "FormElement",
+  name: "FormElementWrapper",
   components: {
     FormSeparator,
     TextField,
@@ -110,7 +110,7 @@ export default {
     FormVideo,
     StudyIdField
   },
-  props: ["formel", "subelement", "value", "isValid"],
+  props: ["elementData", "subelement", "value", "isValid"],
   data() {
     return {
       elementValue: this.value,
@@ -133,12 +133,6 @@ export default {
     },
   },
   mounted() {
-    /* if (document.querySelector("input"))
-      document.querySelector("input").focus();
-    else if (document.querySelector("textarea"))
-      document.querySelector("textarea").focus(); */
-    // document.querySelector("form").focus();
-    // document.querySelector("form").firstChild.focus();
     this.buildValidationSchema();
   },
   created(){
@@ -149,13 +143,13 @@ export default {
   },
   methods: {
     handleFocusOut() {
-      epLogger(this.$cookies.get('endoprem_si'), {question: this.formel.name}, 'question_blur')
+      epLogger(this.$cookies.get('endoprem_si'), {question: this.elementData.name}, 'question_blur')
     },
     async validate() {
       let o = {}
-      o[this.formel.name] = this.elementValue
+      o[this.elementData.name] = this.elementValue
       try {
-        if (this.formel.type != 'section') {
+        if (this.elementData.type != 'section') {
           await this.validationSchema.validate(this.elementValue)
           this.isValid(true)
           this.error = ""
@@ -187,12 +181,12 @@ export default {
       this.error = value ? "" : "Section Invalid";
     },
     buildValidationSchema() {
-      let validationRules = this.formel.validationRules;
+      let validationRules = this.elementData.validationRules;
       if (!validationRules) { 
         this.validationSchema = object().nullable();
         return;
       }
-      let elementType = this.formel.type;
+      let elementType = this.elementData.type;
       let validationSchema = {};
       switch (elementType) {
         case "studyid": {
@@ -249,16 +243,16 @@ export default {
           if (validationRules.max) validationSchema = validationSchema.max(validationRules.max)
           break;
         case "likert-table":
-          validationSchema = array().of(number().transform(value => (isNaN(value) ? 0 : value)).min(0).max(this.formel.options.length))
+          validationSchema = array().of(number().transform(value => (isNaN(value) ? 0 : value)).min(0).max(this.elementData.options.length))
           if (validationRules.required) {
-            validationSchema = validationSchema.required().length(this.formel.prompts.length);
+            validationSchema = validationSchema.required().length(this.elementData.prompts.length);
           }
           break;
         case "likert-bar":
           validationSchema = number().transform(value => (isNaN(value) ? -1 : value))
           if (validationRules.required) validationSchema = validationSchema.required()
-          if (this.formel.options.from) validationSchema = validationSchema.min(this.formel.options.from)
-          if (this.formel.options.to) validationSchema = validationSchema.max(this.formel.options.to)
+          if (this.elementData.options.from) validationSchema = validationSchema.min(this.elementData.options.from)
+          if (this.elementData.options.to) validationSchema = validationSchema.max(this.elementData.options.to)
           break;
         case "radio": case "checkbox":
           validationSchema = string()

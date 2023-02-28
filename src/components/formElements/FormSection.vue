@@ -25,11 +25,11 @@
         >
           {{ eldata.description }}
         </div>
-        <FormElement
+        <FormElementWrapper
           v-for="(q, j) in eldata.questions"
           :key="`sub-form-el-${j}`"
           v-model="result[q.name]"
-          :formel="q"
+          :element-data="q"
           :subelement="true"
           :is-valid="(isValid) => isElementValid(isValid, q.name)"
         />
@@ -43,7 +43,7 @@ import HelpText from "@/components/HelpText.vue";
 export default {
   name: "FormSection",
   components: {
-    FormElement: () => import("@/components/FormElement.vue"),
+    FormElementWrapper: () => import("@/components/FormElementWrapper.vue"),
     HelpText,
   },
   props: ["eldata", "value", "isSectionValid"],

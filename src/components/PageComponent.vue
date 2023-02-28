@@ -5,54 +5,57 @@
     :value="value"
   >
     <div class="section">
-      <h1
-        class="title"
-        :style="{ color: color }"
-      >
-        {{ page[currentQuestion].title }}
+      <h1 class="title">
+        {{ page.title }}
       </h1>
-      <!-- <div class="separator"></div> -->
       <div
-        v-if="page[currentQuestion].description"
+        v-if="page.description"
         class="description"
       >
-        {{ page[currentQuestion].description }}
+        {{ page.description }}
       </div>
-      <FormElement
-        v-for="(q, j) in page[currentQuestion].questions"
-        :id="`form-el-${currentQuestion}-${j}`"
-        :key="`form-el-${currentQuestion}-${j}`"
-        v-model="value[q.name]"
-        :formel="q"
-        :color="color"
-        :is-valid="(isValid) => isElementValid(isValid, q.name)"
+      <FormElementWrapper
+        v-for="(question, j) in page.questions"
+        :id="`form-el-${currentPage}-${j}`"
+        :key="`form-el-${currentPage}-${j}`"
+        v-model="value[question.name]"
+        :element-data="question"
+        :is-valid="(isValid) => isElementValid(isValid, question.name)"
       />
     </div>
-
-    <!-- <div v-for="(section, i) in page" v-bind:key="`section-${i}`" class="section">
-      <div class="title">{{section.title}}</div>
-      <div class="description" v-if="section.description">{{section.description}}</div>
-      <FormElement :id="`form-el-${i}-${j}`" v-for="(q, j) in section.questions" v-bind:key="`form-el-${i}-${j}`" :formel="q" v-model="value[q.name]"/>
-    </div> -->
   </div>
 </template>
 
 <script>
-import FormElement from "@/components/FormElement.vue";
+import FormElementWrapper from "@/components/FormElementWrapper.vue";
 import epLogger from "@/logger.js";
 export default {
   name: "PageComponent",
   components: {
-    FormElement,
+    FormElementWrapper,
   },
-  props: [
-    "page",
-    "value",
-    "currentQuestion",
-    "color",
-    "progressToNext",
-    "currentPage",
-  ],
+  props: {
+    section: {
+      type: Array,
+      required: true
+    },
+    value: {
+      type: Object,
+      required: true
+    },
+    currentPage: {
+      type: Number,
+      required: true
+    },
+    currentSection: {
+      type: Number,
+      required: true
+    },
+    progressToNext: {
+      type: Function,
+      required: true,
+    }
+  },
   data() {
     return {
       result: null,
@@ -64,20 +67,24 @@ export default {
       validationCount: -1,
     };
   },
+  computed: {
+    page () {
+      return this.section[this.currentPage];
+    }
+  },
   watch: {
-    currentQuestion: function (val, oldVal) {
+    currentPage: function (val, oldVal) {
       if (val != oldVal) {
         this.populateValidationObject();
         epLogger(
           this.$cookies.get("endoprem_si"),
-          { page: this.currentPage, question: val },
+          { section: this.currentSection, question: val },
           "page_load"
         );
         document.querySelector('body').focus()
-        console.log('focusing')
       }
     },
-    currentPage: function (val, oldVal) {
+    currentSection: function (val, oldVal) {
       if (val != oldVal) {
         this.populateValidationObject();
       }
@@ -121,7 +128,7 @@ export default {
       this.defaultValues = { ...this.$attrs.value };
     epLogger(
       this.$cookies.get("endoprem_si"),
-      { page: this.currentPage, question: this.currentQuestion },
+      { section: this.currentSection, page: this.currentPage },
       "page_load"
     );
     this.populateValidationObject();
@@ -136,10 +143,10 @@ export default {
   methods: {
     populateValidationObject() {
       let elementsValidation = {};
-      this.page[this.currentQuestion].questions &&
-        this.page[this.currentQuestion].questions.forEach((element) => {
+      this.section[this.currentPage].questions &&
+        this.section[this.currentPage].questions.forEach((element) => {
           if (
-            ["separator", "image", "video"].indexOf(element.type) < 0 &&
+            !["separator", "image", "video"].includes(element.type) &&
             element.name
           )
             elementsValidation[element.name] = false;

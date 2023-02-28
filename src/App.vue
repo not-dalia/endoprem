@@ -37,8 +37,6 @@ export default {
 }
 </script>
 
-
-
 <style lang="stylus">
 @import '~@/theme/variables.styl';
 #app {
