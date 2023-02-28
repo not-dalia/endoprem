@@ -1,65 +1,99 @@
 <template>
   <div
+    :id="`form-el-${eldata.name}`"
     class="likert-group"
     :class="{ subsection: eldata.subsection }"
-    :id="`form-el-${eldata.name}`"
-    v-bind:value="value"
+    :value="value"
   >
-    <label class="title">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
+    <label
+      v-if="eldata.question || (eldata.validationRules && eldata.validationRules.required)"
+      class="title"
+    >{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
     <div class="table">
-      <div class="table-row radio-group-labels">
-        <div class="table-cell empty-cell"></div>
+      <div
+        class="table-row radio-group-labels"
+        aria-hidden="true"
+      >
+        <div class="table-cell empty-cell" />
         <div
-          class="table-cell radio-group-label"
           v-for="(option, oi) in eldata.options"
-          v-bind:key="`${eldata.name}-label-${oi + 1}`"
+          :key="`${eldata.name}-label-${oi + 1}`"
+          class="table-cell radio-group-label"
         >
-          {{ option }}
+          {{ option.text || option }}
         </div>
       </div>
       <div
-        :class="{collapse: collapse.split(',')[pm] == 'true', 'table-row': true, 'radio-group-data': true}"
         v-for="(prompt, pm) in eldata.prompts"
-        v-bind:key="`${eldata.name}-row-${pm + 1}`"
+        :key="`${eldata.name}-row-${pm + 1}`"
+        :class="{collapse: collapse.split(',')[pm] == 'true', 'table-row': true, 'radio-group-data': true}"
+        role="radiogroup"
       >
-        <div class="table-cell prompt" v-on:click="collapse.split(',')[pm] && toggleExpand(pm)">
+        <div
+          class="table-cell prompt"
+          :tabindex="windowSize > 650 ? null : 0"
+          :role="windowSize > 650 ? null : 'button'"
+          :aria-expanded="windowSize > 650 ? null : collapse.split(',')[pm] == 'false' || 'false'"
+          @click="collapse.split(',')[pm] && toggleExpand(pm)"
+          @keyup.enter.space.prevent="collapse.split(',')[pm] && toggleExpand(pm)"
+          @keypress.enter.space.prevent 
+        >
           <div class="title-row">
-            <div class="prompt-text">
+            <legend
+              :id="`${eldata.name}-label-${pm + 1}`"
+              class="prompt-text"
+            >
               {{ prompt.prompt || prompt }}
-            </div>
-              <span>
-                <HelpText :text="prompt.help" :name="eldata.name"/>
-              </span>
+            </legend>
+            <span>
+              <HelpText
+                :text="prompt.help"
+                :name="eldata.name"
+              />
+            </span>
           </div>
-          <div class="prompt-collapse" :style="{color: color}">
-            <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[pm] == 'false', 'fa-chevron-down': collapse.split(',')[pm] == 'true'}"></i>
+          <div class="prompt-collapse">
+            <i :class="{fas: true, 'fa-chevron-up': collapse.split(',')[pm] == 'false', 'fa-chevron-down': collapse.split(',')[pm] == 'true'}" />
           </div>
-        </div>
-        <div class="selected-label" v-if="selectedOptions[pm]" :style="{color: color}">
-          {{ eldata.options[selectedOptions[pm]-1] }}
         </div>
         <div
-          class="table-cell radio-group-cell option-cell"
+          v-if="selectedOptions[prompt.name || pm]"
+          class="selected-label"
+        >
+          {{ eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm]))&&eldata.options.find(e => ( e.value == selectedOptions[prompt.name || pm])).text || eldata.options[selectedOptions[prompt.name || pm]-1] }}
+        </div>
+        <div
           v-for="(option, oi) in eldata.options"
-          v-bind:key="`${eldata.name}-cell-${pm + 1}-${oi + 1}`"
+          :key="`${eldata.name}-cell-${pm + 1}-${oi + 1}`"
+          class="table-cell radio-group-cell option-cell"
         >
           <div
             class="option-row"
-            v-on:click="selectOption(pm, oi + 1)"
+            @click="selectOption(pm, prompt.name || pm, (option.value || (oi + 1)))"
+            @mouseup="closeExpand(pm)"
           >
             <input
+              :id="`${eldata.name}-option-${pm + 1}-${oi + 1}`"
               type="radio"
               :name="`${eldata.name}-option-${pm + 1}`"
-              :id="`${eldata.name}-option-${pm + 1}-${oi + 1}`"
-              :value="oi + 1"
-              :checked="selectedOptions[pm] === oi + 1"
-              v-on:click="closeExpand(pm)"
-            />
+              :aria-label="`${prompt.prompt || prompt}, ${option.text || option}`"
+              :value="option.value || (oi + 1)"
+              :checked="selectedOptions[prompt.name || pm] == (option.value || (oi + 1))"
+            >
+            <label
+              :id="`label-${eldata.name}-option-${pm + 1}-${oi + 1}`"
+              class="likert-labels"
+              :for="`${eldata.name}-option-${pm + 1}-${oi + 1}`"
+            >{{ option.text || option }}</label>
             <div class="checkmark">
-              <div class="checked" :style="{background: color}"></div>
+              <div class="checked" />
             </div>
-            <label class="likert-labels" :for="`${eldata.name}-option-${pm + 1}-${oi + 1}`">{{ option }}</label>
           </div>
         </div>
       </div>
@@ -71,32 +105,39 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "LikertTable",
-  props: ["eldata", "value", "color"],
   components: {
     HelpText
   },
+  inject: ["getWindowSize"],
+  props: ["eldata", "value"],
   data() {
     return {
       today: new Date(),
-      selectedOptions: this.value || [],
+      selectedOptions: this.value || {},
       collapse: '',
       lastChange: 0
     };
   },
-  mounted() {
-    if (this.value != null) this.selectedOptions = this.value;
-    else this.selectedOptions = []
-    var collapse = []
-    this.eldata.prompts.forEach(() => collapse.push(false))
-    this.collapse = collapse.join(',')
+  computed: {
+    windowSize() {
+      return this.getWindowSize()
+    }
   },
   watch: {
     selectedOptions: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.$emit("input", val);
+        // this.$emit("input", Object.keys(val).map(e => this.eldata.options[val[e] -1]&&this.eldata.options[val[e] -1].value || val[e]));
       },
       deep: true
     },
+  },
+  mounted() {
+    if (this.value != null) this.selectedOptions = this.value;
+    else this.selectedOptions = {}
+    var collapse = []
+    this.eldata.prompts.forEach(() => collapse.push(false))
+    this.collapse = collapse.join(',')
   },
   methods: {
     toggleExpand(row) {
@@ -106,15 +147,18 @@ export default {
       console.log(this.collapse)
     },
     closeExpand(row) {
+      // return
+      console.log('closing')
       var collapse = this.collapse.split(',')
       collapse[row] = true
       this.collapse = collapse.join(',')
     },
-    selectOption(row, option) {
-      let selectedOptions = [...this.selectedOptions]
-      selectedOptions[row] = option;
-      this.selectedOptions = [...selectedOptions]
-      this.closeExpand(row)
+    selectOption(row, key, option) {
+      console.log('selecting ' + option)
+      let selectedOptions = {...this.selectedOptions}
+      selectedOptions[key] = option;
+      this.selectedOptions = {...selectedOptions}
+      // this.closeExpand(row)
     },
   },
 };
@@ -157,6 +201,7 @@ a {
 
   .prompt-collapse {
     display: none;
+    color: $theme-color;
   }
 
   .prompt-text {
@@ -173,6 +218,13 @@ a {
     text-align: center;
     font-weight: 400;
     font-size: 0.9rem;
+  }
+
+  fieldset {
+    border: 0;
+    padding: 0.01em 0 0 0;
+    margin: 0;
+    min-width: 0;
   }
 
   .table {
@@ -218,6 +270,10 @@ a {
     display: none;
   }
 
+  .selected-label {
+    color: $theme-color;
+  }
+
   // .collapse {
   //   .option-cell {
   //     display: block;
@@ -238,6 +294,12 @@ a {
         top: 0.75em;
       }
 
+      input[type='radio']:focus ~ .checkmark, input[type='radio']:active ~ .checkmark {
+        // box-shadow: 0 0 0 2px #f90;
+        outline: 2px solid #f90;
+        // outline-offset: 1px;
+      }
+
       .checkmark {
         border-radius: 100%;
         background: #fff;
@@ -256,13 +318,14 @@ a {
           width: 0;
           height: 0;
           padding: 0;
+          background: $theme-color;
         }
       }
 
       input[type='radio']:checked ~ .checkmark {
         .checked {
           border-radius: 100%;
-          background: #009688;
+          background: $theme-color;
           border: none;
           width: 14px;
           height: 14px;
@@ -330,7 +393,7 @@ a {
     bottom: 0;
     right: 0.15rem;
     cursor: pointer;
-    color: #009688;
+    color: $theme-color;
   }
 
   .table-row, .table-cell {
@@ -397,7 +460,7 @@ a {
       display: block !important;
       font-weight: 500;
       font-size: 0.9rem;
-      color: #009688;
+      color: $theme-color;
       padding: 3px 20px 10px 20px;
       // border-bottom: 1px solid #ccc;
       // margin-bottom: 0.5rem;

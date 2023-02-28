@@ -1,26 +1,37 @@
 <template>
   <div
-    class="question-section"
     :id="`form-el-${eldata.name}`"
-    v-bind:value="value"
+    class="question-section"
+    :value="value"
     :class="{ subsection: eldata.subsection }"
   >
     <transition name="slide-fade">
       <div v-if="show">
         <div class="title-row">
-          <div class="title" v-if="eldata.title">{{ eldata.title }}</div>
-          <HelpText :text="eldata.help" :name="eldata.name"/>
+          <div
+            v-if="eldata.title"
+            class="title"
+          >
+            {{ eldata.title }}
+          </div>
+          <HelpText
+            :text="eldata.help"
+            :name="eldata.name"
+          />
         </div>
-        <div class="desc" v-if="eldata.description">
+        <div
+          v-if="eldata.description"
+          class="desc"
+        >
           {{ eldata.description }}
         </div>
-        <FormElement
+        <FormElementWrapper
           v-for="(q, j) in eldata.questions"
-          v-bind:key="`sub-form-el-${j}`"
-          :formel="q"
-          :subelement="true"
+          :key="`sub-form-el-${j}`"
           v-model="result[q.name]"
-          :isValid="(isValid) => isElementValid(isValid, q.name)"
+          :element-data="q"
+          :subelement="true"
+          :is-valid="(isValid) => isElementValid(isValid, q.name)"
         />
       </div>
     </transition>
@@ -30,12 +41,12 @@
 <script>
 import HelpText from "@/components/HelpText.vue";
 export default {
-  name: "Section",
-  props: ["eldata", "value", "isSectionValid"],
+  name: "FormSection",
   components: {
-    FormElement: () => import("@/components/FormElement.vue"),
+    FormElementWrapper: () => import("@/components/FormElementWrapper.vue"),
     HelpText,
   },
+  props: ["eldata", "value", "isSectionValid"],
   data() {
     return {
       show: true,
@@ -47,12 +58,12 @@ export default {
   },
   watch: {
     result: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.$emit("input", val);
       },
       deep: true,
     },
-    validationCount: function (val, oldVal) {
+    validationCount: function (val) {
         if (val >= Object.keys(this.elementsValidation).length) {
           let isDataValid = true;
           Object.keys(this.elementsValidation).forEach((key) => {

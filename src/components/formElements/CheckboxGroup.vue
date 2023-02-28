@@ -1,25 +1,44 @@
 <template>
-  <div class="checkbox-group" :class="{subsection: eldata.subsection }" :id="`form-el-${eldata.name}`" v-bind:value="value">
+  <div
+    :id="`form-el-${eldata.name}`"
+    class="checkbox-group"
+    :class="{subsection: eldata.subsection }"
+    :value="value"
+  >
     <label class="title">{{ eldata.question }}</label>
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
-    <div class="option-row" :class="{ col: getLength() > 10 }">
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
+    <div
+      class="option-row"
+      :class="{ col: getLength() > 10 }"
+    >
       <div
-        class="option-col"
         v-for="(option, oi) in eldata.options"
-        v-bind:key="`${eldata.name}-option-${oi}`"
-        v-on:click="selectOption(oi)"
+        :key="`${eldata.name}-option-${oi}`"
+        class="option-col"
+        @click="selectOption(oi)"
       >
         <input
+          :id="`${eldata.name}-option-${oi}`"
           type="checkbox"
           :name="`${eldata.name}-option`"
-          :id="`${eldata.name}-option-${oi}`"
           :value="getOptionValue(oi)"
           :checked="selectedOptions.indexOf(getOptionValue(oi)) > -1"
-        />
+        >
         <div class="checkmark">
-          <div class="checked" :style="{background: color}"></div>
+          <div
+            class="checked"
+            :style="{background: color}"
+          />
         </div>
-        <label :for="`${eldata.name}-option-${oi}`" style="pointer-events: none;">{{option.text}}</label>
+        <label
+          :for="`${eldata.name}-option-${oi}`"
+          style="pointer-events: none;"
+        >{{ option.text }}</label>
       </div>
     </div>
   </div>
@@ -36,14 +55,6 @@ export default {
       actionOption: null
     };
   },
-  created() {},
-  mounted() {
-    this.eldata.options.forEach((option, i) => {
-      if (option.action) this.actionOption = i+1;
-    });
-    if (this.value != null) this.selectedOptions = [ ...this.value ]
-    this.initialize()
-  },
   watch: {
     selectedOptions: {
       handler: function (val, oldVal) {
@@ -53,12 +64,20 @@ export default {
       deep: true
     }
   },
+  created() {},
+  mounted() {
+    this.eldata.options.forEach((option, i) => {
+      if (option.action) this.actionOption = i+1;
+    });
+    if (this.value != null) this.selectedOptions = [ ...this.value ]
+    this.initialize()
+  },
   methods: {
     initialize () {
       if (!this.actionOption) return;
       let option = this.eldata.options[this.actionOption-1]
       let action = {
-        show: (option.action.onchecked && this.selectedOptions.indexOf(getOptionValue(this.actionOption-1)) > -1 ) || (!option.action.onchecked && this.selectedOptions.indexOf(getOptionValue(this.actionOption-1)) < 0 ),
+        show: (option.action.onchecked && this.selectedOptions.indexOf(this.getOptionValue(this.actionOption-1)) > -1 ) || (!option.action.onchecked && this.selectedOptions.indexOf(this.getOptionValue(this.actionOption-1)) < 0 ),
         element: option.action.name
       }
       this.$root.$emit('toggleElement', action);
@@ -66,11 +85,11 @@ export default {
     getOptionValue(index) {
       return this.eldata.options[index].value || this.eldata.options[index].text.replace(/[^A-Z0-9]+/ig, '_').toLowerCase();
     },
-    checkboxChanged (val, oldVal) {
+    checkboxChanged () {
       if (!this.actionOption) return;
       let option = this.eldata.options[this.actionOption-1]
       let action = {
-        show: (option.action.onchecked && this.selectedOptions.indexOf(getOptionValue(this.actionOption-1)) > -1 ) || (!option.action.onchecked && this.selectedOptions.indexOf(getOptionValue(this.actionOption-1)) < 0 ),
+        show: (option.action.onchecked && this.selectedOptions.indexOf(this.getOptionValue(this.actionOption-1)) > -1 ) || (!option.action.onchecked && this.selectedOptions.indexOf(this.getOptionValue(this.actionOption-1)) < 0 ),
         element: option.action.name
       }
       this.$root.$emit('toggleElement', action);
@@ -181,12 +200,13 @@ a {
           width: 0;
           height: 0;
           padding: 0;
+          background: $theme-color;
         }
       }
 
       input[type='checkbox']:checked ~ .checkmark {
         .checked {
-          background: #009688;
+          background: $theme-color;
           border: none;
           width: 14px;
           height: 14px;

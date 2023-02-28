@@ -1,10 +1,31 @@
 <template>
-  <div class="progress-bar">
+  <div
+    class="progress-bar"
+    role="progressbar"
+    :aria-valuemin="0"
+    :aria-valuenow="getWidth()"
+    :aria-valuemax="100"
+  >
     <div class="bar-container">
-      <div class="bar-fill" :style="{width: getWidth(), background: color}"></div>
-      <div :class="{'page-number': true, done: i - 1 < page}" v-for="i in totalPages" v-bind:key="`progress-page-${i - 1}`" :style="{left: `${(i-1)*(100/(totalPages-1))}%`, background: i - 1 < page ? color : 'inherit'}">
-        <div v-if="i != totalPages">{{ i }}</div>
-        <div v-if="i == totalPages"><i class="fas fa-check"></i></div>
+      <div
+        class="bar-fill"
+        :style="{width: getWidth()}"
+      />
+      <div
+        v-for="i in totalSections"
+        :key="`progress-section-${i - 1}`"
+        :class="{'section-number': true, done: i - 1 < section}"
+        :style="{left: `${(i - 1) * (100 / (totalSections - 1))}%`}"
+      >
+        <div
+          v-if="i != totalSections"
+          :aria-current="section == i ? 'step': null"
+        >
+          {{ i }}
+        </div>
+        <div v-if="i == totalSections">
+          <i class="fas fa-check" />
+        </div>
       </div>
     </div>
   </div>
@@ -13,25 +34,23 @@
 <script>
 export default {
   name: 'ProgressBar',
-  props: ['progress', 'page', 'totalPages', 'color'], 
-  data () {
-    return {
-      // progress: 50,
-      // page: 2,
-      // totalPages: 5
-    }
-  },
-  mounted () {
-    
-  },
-  watch: {
-    // progress: function (val, oldVal) {
-    //     this.$emit('input', this.defaultValues)
-    // }
+  props: {
+    progress: {
+      type: Number,
+      required: true
+    },
+    section: {
+      type: Number,
+      required: true
+    },
+    totalSections: {
+      type: Number,
+      required: true
+    },
   },
   methods: {
     getWidth() {
-      let width = (this.progress/(this.totalPages-1)) + ((this.page - 1) * 100/(this.totalPages-1));
+      let width = (this.progress / (this.totalSections - 1)) + ((this.section - 1) * 100/(this.totalSections - 1));
       return `${width}%`
     }
   }
@@ -58,7 +77,7 @@ export default {
 
   .bar-fill {
     height: 10px;
-    background: #009688;
+    background: $theme-color;
     box-sizing: border-box;
     position: absolute;
     left: 0;
@@ -66,7 +85,7 @@ export default {
     bottom: 0;
   }
 
-  .page-number {
+  .section-number {
     height: 26px;
     width: 26px;
     border-radius: 26px;
@@ -83,7 +102,7 @@ export default {
     transform: translate(-50%, -8px);
 
     &.done {
-      background: #009688;
+      background: $theme-color;
       color: white;
     }
   }

@@ -1,9 +1,23 @@
 <template>
-  <div :class="`help-text ${isOpen? 'open-help-text' : ''}`" v-on:click.stop @focus="handleFocus"
-        @focusout="handleFocusOut"
-        tabindex="0" v-show="text">
-    <div class="question-mark-help-text">?</div>
-    <div v-if="isOpen" class="text-help-text">{{ text }}</div>
+  <div
+    v-show="text"
+    :class="`help-text ${isOpen? 'open-help-text' : ''}`"
+    role="button"
+    tabindex="0"
+    @click.stop.prevent="handleFocus"
+    @keypress.prevent
+    @keyup.space.enter.stop="handleFocus"
+    @focusout="handleFocusOut"
+  >
+    <div class="question-mark-help-text">
+      ?
+    </div>
+    <div
+      v-if="isOpen"
+      class="text-help-text"
+    >
+      {{ text }}
+    </div>
   </div>
 </template>
 
@@ -23,6 +37,7 @@ export default {
       if (this.isOpen) epLogger(this.$cookies.get('endoprem_si'), {question: this.name}, 'help_hint')
     },
     handleFocus() {
+      console.log('toggling ' + this.isOpen)
       this.isOpen = !this.isOpen;
       if (this.isOpen) epLogger(this.$cookies.get('endoprem_si'), {question: this.name}, 'help_hint')
     },

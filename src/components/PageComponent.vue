@@ -1,47 +1,60 @@
 <template>
-  <div class="page" :value="value" ref="page">
+  <div
+    ref="page"
+    class="page"
+    :value="value"
+  >
     <div class="section">
-      <div class="title" :style="{ color: color }">
-        {{ page[currentQuestion].title }}
+      <h1 class="title">
+        {{ page.title }}
+      </h1>
+      <div
+        v-if="page.description"
+        class="description"
+      >
+        {{ page.description }}
       </div>
-      <!-- <div class="separator"></div> -->
-      <div class="description" v-if="page[currentQuestion].description">
-        {{ page[currentQuestion].description }}
-      </div>
-      <FormElement
-        :id="`form-el-${currentQuestion}-${j}`"
-        v-for="(q, j) in page[currentQuestion].questions"
-        v-bind:key="`form-el-${currentQuestion}-${j}`"
-        :formel="q"
-        v-model="value[q.name]"
-        :color="color"
-        :isValid="(isValid) => isElementValid(isValid, q.name)"
+      <FormElementWrapper
+        v-for="(question, j) in page.questions"
+        :id="`form-el-${currentPage}-${j}`"
+        :key="`form-el-${currentPage}-${j}`"
+        v-model="value[question.name]"
+        :element-data="question"
+        :is-valid="(isValid) => isElementValid(isValid, question.name)"
       />
     </div>
-
-    <!-- <div v-for="(section, i) in page" v-bind:key="`section-${i}`" class="section">
-      <div class="title">{{section.title}}</div>
-      <div class="description" v-if="section.description">{{section.description}}</div>
-      <FormElement :id="`form-el-${i}-${j}`" v-for="(q, j) in section.questions" v-bind:key="`form-el-${i}-${j}`" :formel="q" v-model="value[q.name]"/>
-    </div> -->
   </div>
 </template>
 
 <script>
-import FormElement from "@/components/FormElement.vue";
+import FormElementWrapper from "@/components/FormElementWrapper.vue";
 import epLogger from "@/logger.js";
 export default {
-  name: "Page",
-  props: [
-    "page",
-    "value",
-    "currentQuestion",
-    "color",
-    "progressToNext",
-    "currentPage",
-  ],
+  name: "PageComponent",
   components: {
-    FormElement,
+    FormElementWrapper,
+  },
+  props: {
+    section: {
+      type: Array,
+      required: true
+    },
+    value: {
+      type: Object,
+      required: true
+    },
+    currentPage: {
+      type: Number,
+      required: true
+    },
+    currentSection: {
+      type: Number,
+      required: true
+    },
+    progressToNext: {
+      type: Function,
+      required: true,
+    }
   },
   data() {
     return {
@@ -54,40 +67,35 @@ export default {
       validationCount: -1,
     };
   },
-  mounted() {
-    if (this.$attrs.value != null)
-      this.defaultValues = { ...this.$attrs.value };
-    epLogger(
-      this.$cookies.get("endoprem_si"),
-      { page: this.currentPage, question: this.currentQuestion },
-      "page_load"
-    );
-    this.populateValidationObject();
+  computed: {
+    page () {
+      return this.section[this.currentPage];
+    }
   },
   watch: {
-    currentQuestion: function (val, oldVal) {
+    currentPage: function (val, oldVal) {
       if (val != oldVal) {
         this.populateValidationObject();
         epLogger(
           this.$cookies.get("endoprem_si"),
-          { page: this.currentPage, question: val },
+          { section: this.currentSection, question: val },
           "page_load"
         );
+        document.querySelector('body').focus()
       }
     },
-    currentPage: function (val, oldVal) {
+    currentSection: function (val, oldVal) {
       if (val != oldVal) {
         this.populateValidationObject();
-        console.log("page changed");
       }
     },
-    isNextRequested: function (val, oldVal) {
+    isNextRequested: function (val) {
       if (val && Object.keys(this.elementsValidation).length == 0)
         this.progressToNext(true);
     },
     // elementsValidation: {
     validationCount: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         if (val >= Object.keys(this.elementsValidation).length) {
           let isDataValid = true;
           Object.keys(this.elementsValidation).forEach((key) => {
@@ -109,17 +117,22 @@ export default {
       deep: true,
     },
     defaultValues: {
-      handler: function (val, oldVal) {
+      handler: function () {
         this.$emit("input", this.defaultValues);
       },
       deep: true,
     },
-    value: {
-      handler: function (val, oldVal) {
-        // console.log('result changed to: ' + val)
-      },
-      deep: true,
-    },
+  },
+  mounted() {
+    if (this.$attrs.value != null)
+      this.defaultValues = { ...this.$attrs.value };
+    epLogger(
+      this.$cookies.get("endoprem_si"),
+      { section: this.currentSection, page: this.currentPage },
+      "page_load"
+    );
+    this.populateValidationObject();
+    document.querySelector('body').focus()
   },
   created() {
     this.$root.$on("validate", this.requestNext);
@@ -130,10 +143,10 @@ export default {
   methods: {
     populateValidationObject() {
       let elementsValidation = {};
-      this.page[this.currentQuestion].questions &&
-        this.page[this.currentQuestion].questions.forEach((element) => {
+      this.section[this.currentPage].questions &&
+        this.section[this.currentPage].questions.forEach((element) => {
           if (
-            ["separator", "image", "video"].indexOf(element.type) < 0 &&
+            !["separator", "image", "video"].includes(element.type) &&
             element.name
           )
             elementsValidation[element.name] = false;
@@ -199,7 +212,7 @@ a {
   font-weight: 500;
   font-size: 1.8rem;
   text-align: left;
-  color: #009688;
+  color: $theme-color;
   margin-bottom: 1rem;
 }
 

@@ -1,49 +1,62 @@
 <template>
-  <div class="date-field" :class="{subsection: eldata.subsection }"  :id="`form-el-${eldata.name}`" v-bind:value="value">
+  <div
+    :id="`form-el-${eldata.name}`"
+    class="date-field"
+    :class="{subsection: eldata.subsection }"
+    :value="value"
+  >
     <div class="title-row">
       <label class="title">
         <span>{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</span>
       </label>
-      <HelpText :text="eldata.help" :name="eldata.name"/>
+      <HelpText
+        :text="eldata.help"
+        :name="eldata.name"
+      />
     </div>
 
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
     <div class="date-row">
       <div class="date-col">
         <label :for="`${eldata.name}-day`">Day</label>
         <input
+          :id="`${eldata.name}-day`"
+          v-model="selectedDate.day"
           type="number"
           size="4"
           :name="`${eldata.name}-day`"
-          :id="`${eldata.name}-day`"
           min="1"
           max="31"
-          v-model="selectedDate.day"
-        />
+        >
       </div>
       <div class="date-col">
         <label :for="`${eldata.name}-month`">Month</label>
         <input
+          :id="`${eldata.name}-month`"
+          v-model="selectedDate.month"
           type="number"
           size="4"
           :name="`${eldata.name}-month`"
-          :id="`${eldata.name}-month`"
           min="1"
           max="12"
-          v-model="selectedDate.month"
-        />
+        >
       </div>
       <div class="date-col">
         <label :for="`${eldata.name}-year`">Year</label>
         <input
+          :id="`${eldata.name}-year`"
+          v-model="selectedDate.year"
           type="number"
           size="4"
           :name="`${eldata.name}-year`"
-          :id="`${eldata.name}-year`"
           min="1900"
           :max="getYear()"
-          v-model="selectedDate.year"
-        />
+        >
       </div>
     </div>
   </div>
@@ -53,10 +66,10 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "DateField",
-  props: ["eldata", "value"],
   components: {
     HelpText
   },
+  props: ["eldata", "value"],
   data() {
     return {
       today: new Date(),
@@ -66,23 +79,16 @@ export default {
         year: this.value? this.value.year : null
       }
     };
-  },
-  mounted() {
-  },
-  methods: {
-    getYear() {
-      return this.today.getFullYear();
-    },
   }, 
   watch: {
     selectedDate: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         this.$emit('input', val);
       },
       deep: true
     }, 
     value: {
-      handler: function (val, oldVal) {
+      handler: function (val) {
         if (!val) return;
         this.selectedDate.day = val.day;
         this.selectedDate.month = val.month;
@@ -90,6 +96,13 @@ export default {
       },
       deep: true
     }
+  },
+  mounted() {
+  },
+  methods: {
+    getYear() {
+      return this.today.getFullYear();
+    },
   }
 };
 </script>

@@ -1,12 +1,33 @@
 <template>
-  <div class="text-field" :class="{subsection: eldata.subsection }"  :id="`form-el-${eldata.name}`">
+  <div
+    :id="`form-el-${eldata.name}`"
+    class="text-field"
+    :class="{subsection: eldata.subsection }"
+  >
     <div class="title-row">
-      <label :for="eldata.name" class="title">{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
-      <HelpText :text="eldata.help" :name="eldata.name"/>
+      <label
+        :for="eldata.name"
+        class="title"
+      >{{ eldata.question }} {{ eldata.validationRules && eldata.validationRules.required? '(*)' : '' }}</label>
+      <HelpText
+        :text="eldata.help"
+        :name="eldata.name"
+      />
     </div>
-    <div class="desc" v-if="eldata.description">{{ eldata.description }}</div>
+    <div
+      v-if="eldata.description"
+      class="desc"
+    >
+      {{ eldata.description }}
+    </div>
     <div class="input-container">
-      <input type="text" :name="eldata.name" :id="eldata.name" v-bind:value="value" v-on:input="$emit('input', $event.target.value)"/>
+      <input
+        :id="eldata.name"
+        type="text"
+        :name="eldata.name"
+        :value="value"
+        @input="$emit('input', $event.target.value)"
+      >
       <!-- <div class="mic"><span class="record-title">Record Audio</span><img src="@/assets/microphone.svg" style="height:1.3rem" alt="Record audio" title="Record audio"></div> -->
     </div>
   </div>
@@ -16,10 +37,10 @@
 import HelpText from "@/components/HelpText.vue"
 export default {
   name: "TextField",
-  props: ["eldata", "value"],
   components: {
     HelpText
   },
+  props: ["eldata", "value"],
   data() {
     return {};
   },
