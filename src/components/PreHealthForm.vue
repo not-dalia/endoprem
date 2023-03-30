@@ -165,6 +165,7 @@ export default {
         .map(
           (row) =>
             row
+              .map((v) => (v || ""))
               .map(String) // convert every value to String
               .map((v) => v.replaceAll('"', '""')) // escape double colons
               .map((v) => `"${v}"`) // quote it
@@ -178,8 +179,16 @@ export default {
       let contentArray = []
       for (let k in finalResults) {
         titleArray.push(k)
-        contentArray.push(finalResults[k])
       }
+      titleArray = titleArray.sort((a, b) => {
+        //string locale sort
+        // A9 should come before A10
+        return a.localeCompare(b, undefined, { numeric: true })
+      })
+      for (let i = 0; i < titleArray.length; i++) {
+        contentArray.push(finalResults[titleArray[i]])
+      }
+
       let content = this.arrayToCsv([titleArray, contentArray])
 
       var blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
